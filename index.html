@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>福岡・由布院伴手禮採購神器 🛍️ (V12 內建計算機鍵盤版)</title>
+    <title>福岡・由布院伴手禮採購神器 🛍️ (V15 符號精簡版)</title>
     <style>
         :root {
             --primary-color: #d9383a; /* 明太子紅 */
@@ -138,33 +138,6 @@
         }
         input:focus, select:focus { border-color: var(--primary-color); }
 
-        /* 【全新加入】內建虛擬計算機按鍵鍵盤樣式 */
-        .calc-keyboard {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 6px;
-            margin-top: 8px;
-            background: #f1f3f5;
-            padding: 8px;
-            border-radius: 8px;
-            max-width: 320px;
-        }
-        .calc-btn {
-            background: white;
-            border: 1px solid #ced4da;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            text-align: center;
-            user-select: none;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        .calc-btn:active { background: #e9ecef; }
-        .calc-btn.op-btn { background: #e2eafc; color: var(--secondary-color); }
-        .calc-btn.clear-btn { background: #ffebee; color: var(--primary-color); }
-
         /* 單選鈕控制群組樣式 */
         .radio-control-group {
             display: flex;
@@ -289,7 +262,7 @@
             justify-content: space-between;
             align-items: center;
             font-size: 0.9rem;
-            padding: 12px 0;
+            padding: 10px 0;
             border-bottom: 1px solid #f2ebdf;
             flex-wrap: wrap;
             gap: 6px;
@@ -310,7 +283,7 @@
         .pay-badge.card-type { background: #e3f2fd; color: #1565c0; }
         .pay-badge.cash-type { background: #fff3e0; color: #ef6c00; }
 
-        /* 【全新加入】備註行顯示樣式 */
+        /* 備註行顯示樣式 */
         .gift-memo-line {
             font-size: 0.8rem;
             color: #7f8c8d;
@@ -349,7 +322,7 @@
         .btn-icon:hover { background: #eee; }
         .btn-icon.delete:hover { background: #ffebee; }
 
-        /* 總計大看板四軌大升級樣式 */
+        /* 總計大看板樣式 */
         .total-banner {
             background: #2b2d42;
             color: white;
@@ -380,12 +353,14 @@
 <div class="container">
     <header>
         <h1>九州（福岡・由布院）伴手禮採購神器 🛍️</h1>
-        <p>系統狀態：V12 鍵盤備註優化版 (支援內建實體計算機鍵盤、新增每筆紀錄獨立備註顯示欄位)</p>
+        <p>系統狀態：V15 符號精簡版 (移除「日圓」字樣，全面使用純 ￥ 符號俐落呈現)</p>
     </header>
 
+    <!-- 設定與輸入區 -->
     <div class="card">
         <h2>1. 匯率與新增採購紀錄</h2>
         
+        <!-- 備份管理控制區 -->
         <div class="system-actions">
             <button class="btn-secondary" onclick="exportData()">💾 備份/下載目前資料</button>
             <button class="btn-secondary" onclick="document.getElementById('importFile').click()">📂 匯入舊備份檔案</button>
@@ -400,12 +375,13 @@
             </div>
         </div>
 
+        <!-- 福岡/由布院 名產快捷鍵 -->
         <div class="shortcut-container">
             <div class="shortcut-title">💡 九州在地必買快捷推薦（點選直接代入）：</div>
             <div class="shortcut-tags" style="margin-bottom: 10px;">
                 <span class="tag" onclick="quickFillName('博多通饅頭 (通りもん)')">博多通饅頭</span>
                 <span class="tag" onclick="quickFillName('福太郎 明太子仙貝 (めんべい)')">明太子仙貝</span>
-                <span class="tag" onclick="quickFillName('博多ひよ子 (小雞蛋糕)')">ひよ子小雞蛋糕</span>
+                <span class="tag" onclick="quickFillName('博多ひよ子 (小雞蛋糕)')">博多ひよ子小雞蛋糕</span>
                 <span class="tag" onclick="quickFillName('一蘭拉麵 帶回家包裝')">一蘭拉麵包</span>
                 <span class="tag" onclick="quickFillName('努努雞 (冰炸雞)')">努努雞</span>
                 <span class="tag" onclick="quickFillName('茅乃舍高湯包')">茅乃舍高湯</span>
@@ -451,34 +427,11 @@
                     <label for="giftMemo">隨手備註（說明）</label>
                     <input type="text" id="giftMemo" placeholder="例如：藍色包裝、賞味期短">
                 </div>
-                <div class="form-group" style="grid-column: span 1;">
+                <div class="form-group">
                     <label for="jpyPrice">日幣價格 (￥)</label>
-                    <input type="text" id="jpyPrice" placeholder="可打字或按下方計算機" required oninput="showLiveTwd()">
+                    <input type="text" id="jpyPrice" placeholder="可直接輸入算式如 1500*3+500" required oninput="showLiveTwd()">
                     
-                    <div class="calc-keyboard">
-                        <div class="calc-btn" onclick="pressCalc('7')">7</div>
-                        <div class="calc-btn" onclick="pressCalc('8')">8</div>
-                        <div class="calc-btn" onclick="pressCalc('9')">9</div>
-                        <div class="calc-btn op-btn" onclick="pressCalc('/')">÷</div>
-                        
-                        <div class="calc-btn" onclick="pressCalc('4')">4</div>
-                        <div class="calc-btn" onclick="pressCalc('5')">5</div>
-                        <div class="calc-btn" onclick="pressCalc('6')">6</div>
-                        <div class="calc-btn op-btn" onclick="pressCalc('*')">×</div>
-                        
-                        <div class="calc-btn" onclick="pressCalc('1')">1</div>
-                        <div class="calc-btn" onclick="pressCalc('2')">2</div>
-                        <div class="calc-btn" onclick="pressCalc('3')">3</div>
-                        <div class="calc-btn op-btn" onclick="pressCalc('-')">-</div>
-                        
-                        <div class="calc-btn" onclick="pressCalc('0')">0</div>
-                        <div class="calc-btn" onclick="pressCalc('.')">.</div>
-                        <div class="calc-btn clear-btn" onclick="pressCalc('back')">⌫</div>
-                        <div class="calc-btn op-btn" onclick="pressCalc('+')">+</div>
-                        
-                        <div class="calc-btn clear-btn" onclick="pressCalc('C')" style="grid-column: span 4; padding: 6px;">🧹 一鍵清空算式</div>
-                    </div>
-
+                    <!-- 財務拆帳與支付工具控制列 -->
                     <div class="radio-control-group" style="margin-top: 10px;">
                         <label class="radio-label" style="color:#00796b;">
                             <input type="radio" name="purchasePurpose" value="buy" checked> 💰 當下我付，但最後他會給我 (代購)
@@ -515,18 +468,21 @@
         </form>
     </div>
 
+    <!-- 統計與查看區 -->
     <div class="card">
         <h2>2. 每位親友分配明細</h2>
         
+        <!-- 大分類統計花費看板 -->
         <div class="category-summary-dashboard" id="categoryDashboard"></div>
         
         <div id="summaryContainer"></div>
     </div>
 
+    <!-- 總計 Banner -->
     <div class="total-banner">
         <div class="total-row">
             <div>🔴 總計【含稅原價加總】: <span id="grandTotalTaxedJpy">￥0</span> (<span id="grandTotalTaxedTwd">$0</span> TWD)</div>
-            <div style="color:#a8dadc;">🟢 總計【免稅實付加總】: <span id="grandTotalFreeJpy" style="color:#f4a261;">￥0</span> (<span id="grandTotalFreeTwd" style="color:#f4a261;">$0</span> TWD)</div>
+            <div style="color:#a8dadc;">🟢 總計【免稅實付加總】: <span id="grandTotalFreeJpy">￥0</span> (<span id="grandTotalFreeTwd">$0</span> TWD)</div>
         </div>
         
         <div class="split-dashboard-row">
@@ -539,20 +495,21 @@
             <div style="color: #ffe082;">💵 本次行程累計【付現日幣折合台幣】: <span id="grandCashTwd" style="color:#ffb74d;">$0</span> TWD</div>
         </div>
 
-        <div style="font-size:0.82rem; color:#2a9d8f; text-align: right; border-top: 1px dashed #457b9d; padding-top: 6px;">
-            🎉 備註：台幣、拆帳與支付工具皆已自動依每筆紀錄鎖定之獨立匯率換算。目前免稅累計省下：<span id="grandTotalSaved" style="color:#2a9d8f;">￥0</span> 日圓
+        <!-- 【本次精準微調】移除「日圓」字樣，純符號極簡化 -->
+        <div style="font-size:0.85rem; color:#2a9d8f; text-align: right; border-top: 1px dashed #457b9d; padding-top: 6px; font-weight: bold;">
+            🎉 備註：台幣、拆帳與支付工具皆已自動依每筆紀錄鎖定之獨立匯率換算。目前免稅累計省下：<span id="grandTotalSavedJpy" style="color:#2a9d8f;">￥0</span> (約 <span id="grandTotalSavedTwd" style="color:#2a9d8f;">$0</span> TWD)
         </div>
     </div>
 </div>
 
 <script>
-    let giftList = JSON.parse(localStorage.getItem('fukuoka_gifts_v12')) || [];
+    let giftList = JSON.parse(localStorage.getItem('fukuoka_gifts_v14')) || [];
     let editingId = null;
 
-    let customGiftNames = JSON.parse(localStorage.getItem('custom_gift_names_v12')) || [];
-    let customLocations = JSON.parse(localStorage.getItem('custom_locations_v12')) || [];
+    let customGiftNames = JSON.parse(localStorage.getItem('custom_gift_names_v14')) || [];
+    let customLocations = JSON.parse(localStorage.getItem('custom_locations_v14')) || [];
 
-    let savedRate = localStorage.getItem('fukuoka_exchange_rate_v12');
+    let savedRate = localStorage.getItem('fukuoka_exchange_rate_v14');
     if (savedRate) { document.getElementById('exchangeRate').value = savedRate; }
 
     window.onload = function() {
@@ -562,19 +519,6 @@
 
     function quickFillName(name) { document.getElementById('giftName').value = name; }
     function quickFillLoc(loc) { document.getElementById('purchaseLocation').value = loc; }
-
-    // 【全新加入】實體計算機鍵盤點擊處理邏輯
-    function pressCalc(val) {
-        const inputEl = document.getElementById('jpyPrice');
-        if (val === 'C') {
-            inputEl.value = '';
-        } else if (val === 'back') {
-            inputEl.value = inputEl.value.slice(0, -1);
-        } else {
-            inputEl.value += val;
-        }
-        showLiveTwd(); // 按完按鈕即時出發金額解析
-    }
 
     function buildDatalists() {
         const defaultGifts = ['博多通饅頭 (通りもん)', '福太郎 明太子仙貝 (めんべい)', '博多ひよ子 (小雞蛋糕)', '一蘭拉麵 帶回家包裝', '努努雞 (冰炸雞)', '茅乃舍高湯包', '由布院 B-speak 瑞士捲', '由布院 Milch 起司蛋糕', '由布院 金賞可樂餅', '合利他命 EX Plus', '百貨專櫃限定美妝'];
@@ -605,6 +549,7 @@
         }
     }
 
+    // 解析運算式
     function parsePriceInput(inputStr, wantTaxFree, taxPercent = 10) {
         const cleanStr = inputStr.replace(/[^0-9+\-*/().]/g, '');
         if (!cleanStr) return { finalPrice: 0, originalEval: 0, savedTax: 0, taxPercent: 0 };
@@ -645,7 +590,7 @@
         const recipient = document.getElementById('recipient').value.trim();
         const giftName = document.getElementById('giftName').value.trim();
         const purchaseLocation = document.getElementById('purchaseLocation').value.trim() || '未記錄地點';
-        const giftMemo = document.getElementById('giftMemo').value.trim() || ''; // 抓取備註
+        const giftMemo = document.getElementById('giftMemo').value.trim() || '';
         const priceInput = document.getElementById('jpyPrice').value;
         const wantTaxFree = document.getElementById('taxStatus').checked;
         const taxPercent = document.getElementById('taxPercentage').value;
@@ -659,17 +604,15 @@
 
         if (giftName && !customGiftNames.includes(giftName)) {
             customGiftNames.push(giftName);
-            localStorage.setItem('custom_gift_names_v12', JSON.stringify(customGiftNames));
+            localStorage.setItem('custom_gift_names_v14', JSON.stringify(customGiftNames));
         }
         if (purchaseLocation && purchaseLocation !== '未記錄地點' && !customLocations.includes(purchaseLocation)) {
             customLocations.push(purchaseLocation);
-            localStorage.setItem('custom_locations_v12', JSON.stringify(customLocations));
+            localStorage.setItem('custom_locations_v14', JSON.stringify(customLocations));
         }
 
         const gift = {
-            id: Date.now(), recipient, giftName, purchaseLocation, 
-            memo: giftMemo, // 【全新修改】安全寫入備註欄位
-            rawPriceInput: priceInput,
+            id: Date.now(), recipient, giftName, purchaseLocation, memo: giftMemo, rawPriceInput: priceInput,
             jpyPrice: parsed.finalPrice, originalEval: parsed.originalEval, savedTax: parsed.savedTax,
             isTaxFreeComputed: parsed.isTaxFreeComputed, taxPercent: parsed.taxPercent, exchangeRate: currentRate,
             purpose: purpose, payment: payment
@@ -678,7 +621,6 @@
         giftList.push(gift);
         saveToStorage();
         
-        // 重置
         document.getElementById('giftName').value = '';
         document.getElementById('purchaseLocation').value = '';
         document.getElementById('giftMemo').value = '';
@@ -698,7 +640,7 @@
     function saveEdit(id) {
         const editName = document.getElementById(`editName-${id}`).value.trim();
         const editLoc = document.getElementById(`editLoc-${id}`).value.trim() || '未記錄地點';
-        const editMemo = document.getElementById(`editMemo-${id}`).value.trim(); // 編輯抓取備註
+        const editMemo = document.getElementById(`editMemo-${id}`).value.trim();
         const editPriceInput = document.getElementById(`editPrice-${id}`).value;
         const editTaxFree = document.getElementById(`editTax-${id}`).checked;
         const editTaxPercent = document.getElementById(`editTaxPct-${id}`).value;
@@ -712,9 +654,7 @@
         giftList = giftList.map(item => {
             if (item.id === id) {
                 return { 
-                    ...item, giftName: editName, purchaseLocation: editLoc, 
-                    memo: editMemo, // 編輯更新備註
-                    rawPriceInput: editPriceInput,
+                    ...item, giftName: editName, purchaseLocation: editLoc, memo: editMemo, rawPriceInput: editPriceInput,
                     jpyPrice: parsed.finalPrice, originalEval: parsed.originalEval, savedTax: parsed.savedTax,
                     isTaxFreeComputed: parsed.isTaxFreeComputed, taxPercent: parsed.taxPercent, exchangeRate: editRate,
                     purpose: editPurpose, payment: editPayment
@@ -752,7 +692,7 @@
             
             const purposeStr = item.purpose === 'gift' ? '[🎁送禮]' : '[💰代購]';
             const payStr = item.payment === 'cash' ? '[💵現金]' : '[💳刷卡]';
-            const memoStr = item.memo ? ` (📝備註: ${item.memo})` : ''; // LINE 文字明細同步長出備註
+            const memoStr = item.memo ? ` (📝備註: ${item.memo})` : '';
             
             text += `${index + 1}. ${item.giftName}${memoStr} ${purposeStr}${payStr}\n`;
             text += `   📍 地點: ${item.purchaseLocation} (匯率:${itemRate.toFixed(4)})\n`;
@@ -768,16 +708,14 @@
         text += `📊 【${personName}】個人帳目結算：\n`;
         if (totalBuyTwd > 0) { text += `💰 👉 【親友代購需轉帳給我的金額】：NT$ ${totalBuyTwd.toLocaleString()} 元\n`; }
         if (totalGiftTwd > 0) { text += `🎁 💕 【心意送禮/自留花費免收錢】：NT$ ${totalGiftTwd.toLocaleString()} 元\n`; }
-        text += `(實付日幣小計：￥${totalFreeJpy.toLocaleString()} JPY)`;
+        text += `(實付日幣小計：￥${totalFreeJpy.toLocaleString()})`;
 
-        navigator.clipboard.writeText(text).then(() => {
-            alert(`🎉 已成功複製明細！`);
-        }).catch(err => { alert("複製失敗！"); });
+        navigator.clipboard.writeText(text).then(() => { alert("🎉 已成功複製明細！"); }).catch(err => { alert("複製失敗！"); });
     }
 
     function saveToStorage() {
-        localStorage.setItem('fukuoka_gifts_v12', JSON.stringify(giftList));
-        localStorage.setItem('fukuoka_exchange_rate_v12', document.getElementById('exchangeRate').value);
+        localStorage.setItem('fukuoka_gifts_v14', JSON.stringify(giftList));
+        localStorage.setItem('fukuoka_exchange_rate_v14', document.getElementById('exchangeRate').value);
     }
 
     function updateAllCalculations() { saveToStorage(); renderDashboard(); }
@@ -787,7 +725,7 @@
         const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(JSON.stringify(giftList, null, 2));
         const link = document.createElement('a');
         link.setAttribute('href', dataUri);
-        link.setAttribute('download', `九州伴手禮終極優化版備份_${new Date().toISOString().slice(0,10)}.json`);
+        link.setAttribute('download', `九州伴手禮分軌完美版_${new Date().toISOString().slice(0,10)}.json`);
         link.click();
     }
 
@@ -811,7 +749,7 @@
 
     function clearAllData() {
         if (confirm("⚠️ 確定要清空所有福岡伴手禮紀錄嗎？")) {
-            giftList = []; editingId = null; localStorage.removeItem('fukuoka_gifts_v12'); renderDashboard(); alert("已清空！");
+            giftList = []; editingId = null; localStorage.removeItem('fukuoka_gifts_v14'); renderDashboard(); alert("已清空！");
         }
     }
 
@@ -830,7 +768,8 @@
             document.getElementById('grandGiftTwd').innerText = `$0`;
             document.getElementById('grandCardTwd').innerText = `$0`;
             document.getElementById('grandCashTwd').innerText = `$0`;
-            document.getElementById('grandTotalSaved').innerText = `￥0`;
+            document.getElementById('grandTotalSavedJpy').innerText = `￥0`;
+            document.getElementById('grandTotalSavedTwd').innerText = `$0`;
             return;
         }
 
@@ -843,18 +782,27 @@
         };
 
         const groupedData = {};
-        let grandTaxedJpy = 0; let grandFreeJpy = 0; let grandSavedTax = 0;
+        let grandTaxedJpy = 0; let grandFreeJpy = 0; 
         let grandTaxedTwd = 0; let grandFreeTwd = 0;
         let grandBuyTwd = 0;   let grandGiftTwd = 0;
         let grandCardTwd = 0;  let grandCashTwd = 0;
+        let grandSavedTaxJpy = 0;
+        let grandSavedTaxTwd = 0;
 
         giftList.forEach(item => {
             const itemRate = item.exchangeRate || 0.215;
             const itemTaxedTwd = Math.round(item.originalEval * itemRate);
             const itemFreeTwd = Math.round(item.jpyPrice * itemRate);
 
-            grandTaxedJpy += item.originalEval; grandFreeJpy += item.jpyPrice; grandSavedTax += (item.savedTax || 0);
-            grandTaxedTwd += itemTaxedTwd; grandFreeTwd += itemFreeTwd;
+            grandTaxedJpy += item.originalEval; 
+            grandFreeJpy += item.jpyPrice; 
+            grandTaxedTwd += itemTaxedTwd; 
+            grandFreeTwd += itemFreeTwd;
+            
+            if (item.savedTax) {
+                grandSavedTaxJpy += item.savedTax;
+                grandSavedTaxTwd += Math.round(item.savedTax * itemRate);
+            }
             
             if (item.purpose === 'gift') { grandGiftTwd += itemFreeTwd; } else { grandBuyTwd += itemFreeTwd; }
             if (item.payment === 'cash') { grandCashTwd += itemFreeTwd; } else { grandCardTwd += itemFreeTwd; }
@@ -904,19 +852,17 @@
                 
                 const purposeBadge = item.purpose === 'gift' ? `<span class="purpose-badge gift-type">🎁 送禮</span>` : `<span class="purpose-badge buy-type">💰 代購</span>`;
                 const paymentBadge = item.payment === 'cash' ? `<span class="pay-badge cash-type">💵 現金</span>` : `<span class="pay-badge card-type">💳 刷卡</span>`;
-
-                // 【全新加入】如果有備註文字，組出備註的 HTML 區塊
                 const memoHtml = item.memo ? `<div class="gift-memo-line">📝 備註: ${item.memo}</div>` : '';
 
                 if (editingId === item.id) {
                     itemsHtml += `
                         <div class="gift-item" style="background: #fff3cd; padding: 6px; border-radius: 6px;">
                             <div class="edit-input-group">
-                                <input type="text" id="editName-${item.id}" class="input-edit-name" value="${item.giftName}" title="品名">
-                                <input type="text" id="editLoc-${item.id}" class="input-edit-loc" value="${item.purchaseLocation}" title="地點">
-                                <input type="text" id="editMemo-${item.id}" class="input-edit-memo" value="${item.memo || ''}" placeholder="修改備註" title="備註">
-                                <input type="text" id="editPrice-${item.id}" class="input-edit-price" value="${item.rawPriceInput || item.originalEval}" title="價格">
-                                <input type="number" id="editRate-${item.id}" class="input-edit-rate" value="${itemRate}" step="0.0001" title="匯率">
+                                <input type="text" id="editName-${item.id}" class="input-edit-name" value="${item.giftName}" list="giftNamePresets">
+                                <input type="text" id="editLoc-${item.id}" class="input-edit-loc" value="${item.purchaseLocation}" list="locationPresets">
+                                <input type="text" id="editMemo-${item.id}" class="input-edit-memo" value="${item.memo || ''}" placeholder="修改備註">
+                                <input type="text" id="editPrice-${item.id}" class="input-edit-price" value="${item.rawPriceInput || item.originalEval}">
+                                <input type="number" id="editRate-${item.id}" class="input-edit-rate" value="${itemRate}" step="0.0001">
                                 <select id="editPurpose-${item.id}" style="padding: 2px; font-size:0.75rem;">
                                     <option value="buy" ${item.purpose === 'buy' ? 'selected' : ''}>💰 代購</option>
                                     <option value="gift" ${item.purpose === 'gift' ? 'selected' : ''}>🎁 送禮</option>
@@ -950,7 +896,8 @@
                                     ${taxLabel}
                                     <span class="rate-badge">💱 匯率: ${itemRate.toFixed(4)}</span>
                                 </div>
-                                ${memoHtml} </div>
+                                ${memoHtml}
+                            </div>
                             <div class="gift-price-zone">
                                 <div class="price-row-taxed">原含稅價: ￥${item.originalEval.toLocaleString()} (約 $${twdTaxed.toLocaleString()})</div>
                                 ${item.isTaxFreeComputed ? `<div class="price-row-free">免稅實付: ￥${item.jpyPrice.toLocaleString()} (約 $${twdFree.toLocaleString()})</div>` : `<div class="price-row-free" style="color:#666; font-weight:normal;">無退稅實付相同</div>`}
@@ -984,7 +931,6 @@
 
         container.innerHTML = htmlContent;
 
-        // 大看板數據
         document.getElementById('grandTotalTaxedJpy').innerText = `￥${grandTaxedJpy.toLocaleString()}`;
         document.getElementById('grandTotalTaxedTwd').innerText = `$${grandTaxedTwd.toLocaleString()}`;
         document.getElementById('grandTotalFreeJpy').innerText = `￥${grandFreeJpy.toLocaleString()}`;
@@ -993,7 +939,10 @@
         document.getElementById('grandGiftTwd').innerText = `$${grandGiftTwd.toLocaleString()}`;
         document.getElementById('grandCardTwd').innerText = `$${grandCardTwd.toLocaleString()}`;
         document.getElementById('grandCashTwd').innerText = `$${grandCashTwd.toLocaleString()}`;
-        document.getElementById('grandTotalSaved').innerText = `￥${Math.round(grandSavedTax).toLocaleString()}`;
+        
+        // 渲染純粹 ￥ 符號的省錢大加總數字
+        document.getElementById('grandTotalSavedJpy').innerText = `￥${grandSavedTaxJpy.toLocaleString()}`;
+        document.getElementById('grandTotalSavedTwd').innerText = `$${grandSavedTaxTwd.toLocaleString()}`;
     }
 </script>
 
