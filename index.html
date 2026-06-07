@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>福岡・由布院伴手禮採購神器 🛍️ (V16 快捷手風琴版)</title>
+    <title>福岡・由布院伴手禮採購神器 🛍️ (V19 親友摺疊版)</title>
     <style>
         :root {
             --primary-color: #d9383a; /* 明太子紅 */
@@ -95,7 +95,7 @@
         }
         .btn-danger-outline:hover { background: #fff5f5; border-color: #e63946; }
 
-        /* 【全新調整】快捷推薦手風琴按鈕與容器樣式 */
+        /* 快捷推薦手風琴樣式 */
         .accordion-trigger-btn {
             background-color: #fff5f5;
             color: #c92a2a;
@@ -122,8 +122,7 @@
             border-radius: 8px;
             border: 1px dashed #ffccd5;
             margin-bottom: 15px;
-            display: block; /* 預設展開 */
-            transition: all 0.3s ease-out;
+            display: block;
         }
         .shortcut-title { font-size: 0.8rem; color: var(--primary-color); margin-bottom: 6px; font-weight: bold; }
         .shortcut-tags { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -253,10 +252,13 @@
             margin-bottom: 10px;
             flex-wrap: wrap;
             gap: 8px;
+            cursor: pointer; /* 讓使用者知道整行可以點擊摺疊 */
+            user-select: none;
         }
 
         .person-name-box { display: flex; align-items: center; gap: 8px; }
         .person-name { font-weight: bold; font-size: 1.05rem; color: #1a1a1a; }
+        .person-toggle-arrow { font-size: 0.85rem; color: #888; margin-left: 4px; transition: transform 0.2s; }
         
         .btn-copy {
             background: #e8f5e9;
@@ -277,6 +279,14 @@
         }
         .person-total-taxed { color: #666; }
         .person-total-free { color: var(--primary-color); font-weight: bold; }
+
+        /* 摺疊本體明細容器 */
+        .person-gifts-body {
+            display: block; /* 預設展開 */
+        }
+        .person-gifts-body.collapsed {
+            display: none; /* 摺疊時隱藏 */
+        }
 
         /* 每一行禮物項目樣式 */
         .gift-item {
@@ -375,7 +385,7 @@
 <div class="container">
     <header>
         <h1>九州（福岡・由布院）伴手禮採購神器 🛍️</h1>
-        <p>系統狀態：V16 快捷手風琴版 (已將九州名產與爆買聖地快捷區升級為可摺疊式面板)</p>
+        <p>系統狀態：V19 親友明細獨立摺疊版 (保留完整底層財務看板與獨立算式數據)</p>
     </header>
 
     <div class="card">
@@ -432,9 +442,9 @@
             <div class="grid-inputs">
                 <div class="form-group">
                     <label for="recipient">送給誰（對象）</label>
-                    <input type="text" id="recipient" placeholder="例如：家人-媽媽、朋友小明" required list="recipientPresets">
+                    <input type="text" id="recipient" placeholder="例如：家人1、家人123、朋友" required list="recipientPresets">
                     <datalist id="recipientPresets">
-                        <option value="家人"><option value="同事"><option value="朋友"><option value="自用">
+                        <option value="家人1"><option value="家人123"><option value="同事"><option value="朋友"><option value="自用">
                     </datalist>
                 </div>
                 <div class="form-group">
@@ -524,6 +534,9 @@
 <script>
     let giftList = JSON.parse(localStorage.getItem('fukuoka_gifts_v14')) || [];
     let editingId = null;
+    
+    // 用於記錄哪些親友被摺疊了 (儲存名字的物件)
+    let collapsedState = {}; 
 
     let customGiftNames = JSON.parse(localStorage.getItem('custom_gift_names_v14')) || [];
     let customLocations = JSON.parse(localStorage.getItem('custom_locations_v14')) || [];
@@ -536,7 +549,6 @@
         renderDashboard();
     };
 
-    // 【全新加入】控制圖片快捷區手風琴摺疊函式
     function toggleShortcutAccordion() {
         const el = document.getElementById('shortcutAccordion');
         const arrow = document.getElementById('accordionArrow');
@@ -546,6 +558,21 @@
         } else {
             el.style.display = 'none';
             arrow.innerText = '▲';
+        }
+    }
+
+    // 控制個別親友名單的收合與折疊
+    function togglePersonGifts(personName) {
+        collapsedState[personName] = !collapsedState[personName];
+        const bodyEl = document.getElementById(`personBody-${personName}`);
+        const arrowEl = document.getElementById(`personArrow-${personName}`);
+        
+        if (collapsedState[personName]) {
+            bodyEl.classList.add('collapsed');
+            arrowEl.innerText = '▶';
+        } else {
+            bodyEl.classList.remove('collapsed');
+            arrowEl.innerText = '▼';
         }
     }
 
@@ -749,14 +776,12 @@
         localStorage.setItem('fukuoka_exchange_rate_v14', document.getElementById('exchangeRate').value);
     }
 
-    function updateAllCalculations() { saveToStorage(); renderDashboard(); }
-
     function exportData() {
         if (giftList.length === 0) { alert("目前沒有資料可備份！"); return; }
         const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(JSON.stringify(giftList, null, 2));
         const link = document.createElement('a');
         link.setAttribute('href', dataUri);
-        link.setAttribute('download', `九州伴手禮分軌完美版_${new Date().toISOString().slice(0,10)}.json`);
+        link.setAttribute('download', `九州全功能分軌完美版_${new Date().toISOString().slice(0,10)}.json`);
         link.click();
     }
 
@@ -848,7 +873,7 @@
             groupedData[item.recipient].push(item);
         });
 
-        // 渲染大分類
+        // 渲染頂部大分類
         let dashHtml = '';
         for (const key in catTotals) {
             const c = catTotals[key];
@@ -864,19 +889,22 @@
         }
         dashboardEl.innerHTML = dashHtml;
 
-        // 渲染明細
+        // 渲染親友獨立明細區卡片
         let htmlContent = '';
         for (const person in groupedData) {
             let personTaxedJpy = 0; let personFreeJpy = 0;
-            let personTaxedTwd = 0; let personFreeTwd = 0;
             let itemsHtml = '';
+
+            // 確保折疊狀態有預設值 (預設為 false 展開)
+            if (collapsedState[person] === undefined) {
+                collapsedState[person] = false;
+            }
 
             groupedData[person].forEach(item => {
                 const itemRate = item.exchangeRate || 0.215;
                 personTaxedJpy += item.originalEval; personFreeJpy += item.jpyPrice;
                 const twdTaxed = Math.round(item.originalEval * itemRate);
                 const twdFree = Math.round(item.jpyPrice * itemRate);
-                personTaxedTwd += twdTaxed; personFreeTwd += twdFree;
                 
                 let taxLabel = `<span class="tax-badge">未退稅</span>`;
                 if (item.isTaxFreeComputed) { taxLabel = `<span class="tax-free-badge">已改算免稅 (${item.taxPercent}%)</span>`; }
@@ -887,7 +915,7 @@
 
                 if (editingId === item.id) {
                     itemsHtml += `
-                        <div class="gift-item" style="background: #fff3cd; padding: 6px; border-radius: 6px;">
+                        <div class="gift-item" style="background: #fff3cd; padding: 6px; border-radius: 6px;" onclick="event.stopPropagation();">
                             <div class="edit-input-group">
                                 <input type="text" id="editName-${item.id}" class="input-edit-name" value="${item.giftName}" list="giftNamePresets">
                                 <input type="text" id="editLoc-${item.id}" class="input-edit-loc" value="${item.purchaseLocation}" list="locationPresets">
@@ -910,14 +938,14 @@
                                 </div>
                             </div>
                             <div class="action-btns">
-                                <button class="btn-icon" onclick="saveEdit(${item.id})">💾</button>
-                                <button class="btn-icon" onclick="cancelEdit()">↩️</button>
+                                <button class="btn-icon" onclick="saveEdit(${item.id}); event.stopPropagation();">💾</button>
+                                <button class="btn-icon" onclick="cancelEdit(); event.stopPropagation();">↩️</button>
                             </div>
                         </div>
                     `;
                 } else {
                     itemsHtml += `
-                        <div class="gift-item">
+                        <div class="gift-item" onclick="event.stopPropagation();">
                             <div class="gift-info">
                                 <div class="gift-title-line">
                                     <span>🎁 ${item.giftName}</span>
@@ -934,34 +962,45 @@
                                 ${item.isTaxFreeComputed ? `<div class="price-row-free">免稅實付: ￥${item.jpyPrice.toLocaleString()} (約 $${twdFree.toLocaleString()})</div>` : `<div class="price-row-free" style="color:#666; font-weight:normal;">無退稅實付相同</div>`}
                             </div>
                             <div class="action-btns">
-                                <button class="btn-icon" onclick="startEdit(${item.id})" title="編輯">✏️</button>
-                                <button class="btn-icon delete" onclick="deleteGift(${item.id})" title="刪除">❌</button>
+                                <button class="btn-icon" onclick="startEdit(${item.id}); event.stopPropagation();" title="編輯">✏️</button>
+                                <button class="btn-icon delete" onclick="deleteGift(${item.id}); event.stopPropagation();" title="刪除">❌</button>
                             </div>
                         </div>
                     `;
                 }
             });
 
+            const currentGlobalRate = parseFloat(document.getElementById('exchangeRate').value) || 0.215;
             const safeItemsJson = JSON.stringify(groupedData[person]).replace(/'/g, "\\'");
+            
+            // 根據當前的折疊狀態決定類別與箭頭符號
+            const isCollapsed = collapsedState[person];
+            const bodyClass = isCollapsed ? 'person-gifts-body collapsed' : 'person-gifts-body';
+            const arrowChar = isCollapsed ? '▶' : '▼';
+
             htmlContent += `
                 <div class="person-summary">
-                    <div class="person-header">
+                    <div class="person-header" onclick="togglePersonGifts('${person}')">
                         <div class="person-name-box">
+                            <span class="person-toggle-arrow" id="personArrow-${person}">${arrowChar}</span>
                             <span class="person-name">👤 ${person}</span>
-                            <button class="btn-copy" onclick='copyToClipboard("${person}", ${safeItemsJson})'>📋 複製 LINE 明細</button>
+                            <button class="btn-copy" onclick='copyToClipboard("${person}", ${safeItemsJson}); event.stopPropagation();'>📋 複製 LINE 明細</button>
                         </div>
                         <div class="person-total-box">
-                            <div class="person-total-taxed">含稅原小計: ￥${personTaxedJpy.toLocaleString()} / $${personTaxedTwd.toLocaleString()} TWD</div>
-                            <div class="person-total-free">免稅實小計: ￥${personFreeJpy.toLocaleString()} / $${personFreeTwd.toLocaleString()} TWD</div>
+                            <div class="person-total-taxed">含稅原小計: ￥${personTaxedJpy.toLocaleString()} / $${Math.round(personTaxedJpy * currentGlobalRate).toLocaleString()} TWD</div>
+                            <div class="person-total-free">免稅實小計: ￥${personFreeJpy.toLocaleString()} / $${Math.round(personFreeJpy * currentGlobalRate).toLocaleString()} TWD</div>
                         </div>
                     </div>
-                    ${itemsHtml}
+                    <div class="${bodyClass}" id="personBody-${person}">
+                        ${itemsHtml}
+                    </div>
                 </div>
             `;
         }
 
         container.innerHTML = htmlContent;
 
+        // 完美同步底層大看板四軌數據與黑色看板
         document.getElementById('grandTotalTaxedJpy').innerText = `￥${grandTaxedJpy.toLocaleString()}`;
         document.getElementById('grandTotalTaxedTwd').innerText = `$${grandTaxedTwd.toLocaleString()}`;
         document.getElementById('grandTotalFreeJpy').innerText = `￥${grandFreeJpy.toLocaleString()}`;
