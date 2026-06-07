@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>福岡・由布院伴手禮採購神器 🛍️ (V20 財務修正版)</title>
+    <title>福岡・由布院伴手禮採購神器 🛍️ (V21 按鈕精簡版)</title>
     <style>
         :root {
             --primary-color: #d9383a; /* 明太子紅 */
@@ -71,17 +71,6 @@
             padding: 10px;
             border-radius: 8px;
         }
-        .btn-secondary {
-            background: #ffffff;
-            color: #495057;
-            border: 1px solid #ced4da;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .btn-secondary:hover { background: #e9ecef; }
         .btn-danger-outline {
             background: #ffffff;
             color: #e63946;
@@ -91,7 +80,7 @@
             font-size: 0.8rem;
             cursor: pointer;
             font-weight: bold;
-            margin-left: auto;
+            margin-left: auto; /* 讓清空按鈕漂亮地靠最右邊對齊 */
         }
         .btn-danger-outline:hover { background: #fff5f5; border-color: #e63946; }
 
@@ -385,16 +374,13 @@
 <div class="container">
     <header>
         <h1>九州（福岡・由布院）伴手禮採購神器 🛍️</h1>
-        <p>系統狀態：V20 財務邏輯修正版 (修正個人區塊各自鎖定匯率的台幣加總顯示)</p>
+        <p>系統狀態：V21 按鈕精簡版 (已完全移出檔案備份與匯入功能，版面更極簡直覺)</p>
     </header>
 
     <div class="card">
         <h2>1. 匯率與新增採購紀錄</h2>
         
         <div class="system-actions">
-            <button class="btn-secondary" onclick="exportData()">💾 備份/下載目前資料</button>
-            <button class="btn-secondary" onclick="document.getElementById('importFile').click()">📂 匯入舊備份檔案</button>
-            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
             <button class="btn-danger-outline" onclick="clearAllData()">🗑️ 清空所有清單</button>
         </div>
         
@@ -775,33 +761,6 @@
         localStorage.setItem('fukuoka_exchange_rate_v14', document.getElementById('exchangeRate').value);
     }
 
-    function exportData() {
-        if (giftList.length === 0) { alert("目前沒有資料可備份！"); return; }
-        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(JSON.stringify(giftList, null, 2));
-        const link = document.createElement('a');
-        link.setAttribute('href', dataUri);
-        link.setAttribute('download', `九州全功能分軌完美版_${new Date().toISOString().slice(0,10)}.json`);
-        link.click();
-    }
-
-    function importData(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const imported = JSON.parse(e.target.result);
-                if (Array.isArray(imported)) {
-                    if (confirm("匯入將會覆蓋目前清單，確定要繼續嗎？")) {
-                        giftList = imported; editingId = null; saveToStorage(); renderDashboard(); alert("🎉 匯入成功！");
-                    }
-                }
-            } catch(err) { alert("格式錯誤！"); }
-        };
-        reader.readAsText(file);
-        event.target.value = '';
-    }
-
     function clearAllData() {
         if (confirm("⚠️ 確定要清空所有福岡伴手禮紀錄嗎？")) {
             giftList = []; editingId = null; localStorage.removeItem('fukuoka_gifts_v14'); renderDashboard(); alert("已清空！");
@@ -872,7 +831,7 @@
             groupedData[item.recipient].push(item);
         });
 
-        // 渲染頂部大分類
+        // 渲染大分類
         let dashHtml = '';
         for (const key in catTotals) {
             const c = catTotals[key];
@@ -888,11 +847,11 @@
         }
         dashboardEl.innerHTML = dashHtml;
 
-        // 渲染親友獨立明細區卡片
+        // 渲染親友卡片
         let htmlContent = '';
         for (const person in groupedData) {
             let personTaxedJpy = 0; let personFreeJpy = 0;
-            let personTaxedTwd = 0; let personFreeTwd = 0; // 🛠️ 新增獨立台幣加總變數
+            let personTaxedTwd = 0; let personFreeTwd = 0; 
             let itemsHtml = '';
 
             if (collapsedState[person] === undefined) {
@@ -907,8 +866,8 @@
                 const twdTaxed = Math.round(item.originalEval * itemRate);
                 const twdFree = Math.round(item.jpyPrice * itemRate);
                 
-                personTaxedTwd += twdTaxed; // 🛠️ 累加每筆計算出來的台幣
-                personFreeTwd += twdFree;   // 🛠️ 累加每筆計算出來的台幣
+                personTaxedTwd += twdTaxed; 
+                personFreeTwd += twdFree;   
                 
                 let taxLabel = `<span class="tax-badge">未退稅</span>`;
                 if (item.isTaxFreeComputed) { taxLabel = `<span class="tax-free-badge">已改算免稅 (${item.taxPercent}%)</span>`; }
@@ -1002,7 +961,7 @@
 
         container.innerHTML = htmlContent;
 
-        // 同步大看板
+        // 大看板數據同步
         document.getElementById('grandTotalTaxedJpy').innerText = `￥${grandTaxedJpy.toLocaleString()}`;
         document.getElementById('grandTotalTaxedTwd').innerText = `$${grandTaxedTwd.toLocaleString()}`;
         document.getElementById('grandTotalFreeJpy').innerText = `￥${grandFreeJpy.toLocaleString()}`;
