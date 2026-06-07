@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>福岡・由布院伴手禮採購神器 🛍️ (V25 語意優化版)</title>
+    <title>福岡・由布院伴手禮採購神器 🛍️ (V26 編輯框優化版)</title>
     <style>
         :root {
             --primary-color: #d9383a; /* 明太子紅 */
@@ -371,6 +371,14 @@
         .input-edit-memo { width: 12%; min-width: 60px; border-color: #bdc3c7; }
         .input-edit-price { width: 14%; min-width: 55px; }
         .input-edit-rate { width: 9%; min-width: 45px; border-color: #9b59b6; }
+        
+        /* 🛠️ 【本次精準優化】加大「分配明細」區塊中免稅稅率輸入框的長、寬及內襯 padding */
+        .input-edit-taxpercent {
+            width: 45px !important; /* 寬度加大，避免內容與控制鈕擠壓 */
+            padding: 4px 6px !important; /* 內襯加厚，更好點擊與閱讀 */
+            font-size: 0.82rem;
+            text-align: center;
+        }
 
         /* 總計大看板樣式 */
         .total-banner {
@@ -403,7 +411,7 @@
 <div class="container">
     <header>
         <h1>九州（福岡・由布院）伴手禮採購神器 🛍️</h1>
-        <p>系統狀態：V25 語意優化完全體 (調整表單文字描述，保持強大的左右分軌及鎖定獨立匯率計算)</p>
+        <p>系統狀態：V26 編輯框優化版 (精準微調分配明細區之行內免稅稅率輸入框大小)</p>
     </header>
 
     <!-- 設定與輸入區 -->
@@ -440,7 +448,7 @@
                 <span class="tag" onclick="quickFillName('茅乃舍高湯包')">茅乃舍高湯</span>
                 <span class="tag" onclick="quickFillName('由布院 B-speak 瑞士捲')">🧁 由布院 B-speak</span>
                 <span class="tag" onclick="quickFillName('由布院 Milch 起司蛋糕')">🧀 由布院 Milch</span>
-                <span class="tag" onclick="quickFillName('由布院 金賞可樂餅')">🥔 金賞可樂餅</span>
+                <span class="tag" onclick="quickFillName('由布院 金賞可樂餅')">🥔 由布院 金賞可樂餅</span>
                 <span class="tag" onclick="quickFillName('合利他命 EX Plus')">💊 合利他命 EX</span>
                 <span class="tag" onclick="quickFillName('百貨專櫃限定美妝')">💄 百貨專櫃美妝</span>
             </div>
@@ -462,7 +470,7 @@
             <div class="grid-inputs">
                 <div class="form-group">
                     <label for="recipient">送給誰（對象）</label>
-                    <input type="text" id="recipient" placeholder="例如：家人1、家人123、朋友" required list="recipientPresets">
+                    <input type="text" id="recipient" placeholder="Ref: 例如：家人1、家人123、朋友" required list="recipientPresets">
                     <datalist id="recipientPresets">
                         <option value="家人1"><option value="家人123"><option value="同事"><option value="朋友"><option value="自用">
                     </datalist>
@@ -488,7 +496,6 @@
                     <label for="jpyPrice">日幣價格 (￥)</label>
                     <input type="text" id="jpyPrice" placeholder="可直接輸入算式如 1500*3+500" required oninput="showLiveTwd()">
                     
-                    <!-- 🛠️ 財務拆帳與目的選項文字優化 -->
                     <div class="radio-control-group" style="margin-top: 10px;">
                         <label class="radio-label" style="color:#00796b;">
                             <input type="radio" name="purchasePurpose" value="buy" checked> 💰 (代購) 他人託付，回台需對外拆帳
@@ -507,7 +514,6 @@
                         </label>
                     </div>
 
-                    <!-- 🛠️ 退稅核取方塊文字優化 -->
                     <div class="tax-control-group">
                         <label class="checkbox-label">
                             <input type="checkbox" id="taxStatus" onchange="toggleTaxRateInput('add'); showLiveTwd();"> 此價格為含稅原價，自動改算免稅價 ￥
@@ -561,7 +567,7 @@
         </div>
 
         <div style="font-size:0.85rem; color:#2a9d8f; text-align: right; border-top: 1px dashed #457b9d; padding-top: 6px; font-weight: bold;">
-            🎉 備註：台幣、拆帳與支付工具皆已自動依每筆紀錄鎖定之獨立匯率換算。目前免稅累計省下：<span id="grandTotalSavedJpy" style="color:#2a9d8f;">￥0</span> (約 <span id="grandTotalSavedTwd" style="color:#2a9d8f;">$0</span> TWD)
+            🎉 備註：台幣、拆帳與支付工具皆已自動依每筆紀錄鎖定之獨立匯率換算。目前免稅累計省下：<span id="grandTotalSavedJpy">￥0</span> (約 <span id="grandTotalSavedTwd">$0</span> TWD)
         </div>
     </div>
 </div>
@@ -948,7 +954,7 @@
                                     <input type="checkbox" id="editTax-${item.id}" ${item.isTaxFreeComputed ? 'checked' : ''} onchange="toggleTaxRateInput('edit', ${item.id})"> 免稅
                                 </label>
                                 <div id="editTaxBox-${item.id}" style="display: ${item.isTaxFreeComputed ? 'flex' : 'none'}; align-items: center; gap: 1px; font-size: 0.7rem;">
-                                    <input type="number" id="editTaxPct-${item.id}" value="${item.taxPercent || 10}" style="width: 20px; padding: 1px;">%
+                                    <input type="number" id="editTaxPct-${item.id}" value="${item.taxPercent || 10}" class="input-edit-taxpercent">%
                                 </div>
                             </div>
                             <div class="action-btns">
