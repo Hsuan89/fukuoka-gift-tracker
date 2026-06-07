@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>福岡・由布院伴手禮採購神器 🛍️ (V15 符號精簡版)</title>
+    <title>福岡・由布院伴手禮採購神器 🛍️ (V16 快捷手風琴版)</title>
     <style>
         :root {
             --primary-color: #d9383a; /* 明太子紅 */
@@ -95,13 +95,35 @@
         }
         .btn-danger-outline:hover { background: #fff5f5; border-color: #e63946; }
 
-        /* 快捷推薦區 */
+        /* 【全新調整】快捷推薦手風琴按鈕與容器樣式 */
+        .accordion-trigger-btn {
+            background-color: #fff5f5;
+            color: #c92a2a;
+            border: 1px dashed #ffccd5;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            outline: none;
+            user-select: none;
+        }
+        .accordion-trigger-btn:hover { background-color: #ffe3e3; }
+        
         .shortcut-container {
-            margin-bottom: 15px;
             background: #fff5f5;
-            padding: 10px;
+            padding: 12px;
             border-radius: 8px;
             border: 1px dashed #ffccd5;
+            margin-bottom: 15px;
+            display: block; /* 預設展開 */
+            transition: all 0.3s ease-out;
         }
         .shortcut-title { font-size: 0.8rem; color: var(--primary-color); margin-bottom: 6px; font-weight: bold; }
         .shortcut-tags { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -353,14 +375,12 @@
 <div class="container">
     <header>
         <h1>九州（福岡・由布院）伴手禮採購神器 🛍️</h1>
-        <p>系統狀態：V15 符號精簡版 (移除「日圓」字樣，全面使用純 ￥ 符號俐落呈現)</p>
+        <p>系統狀態：V16 快捷手風琴版 (已將九州名產與爆買聖地快捷區升級為可摺疊式面板)</p>
     </header>
 
-    <!-- 設定與輸入區 -->
     <div class="card">
         <h2>1. 匯率與新增採購紀錄</h2>
         
-        <!-- 備份管理控制區 -->
         <div class="system-actions">
             <button class="btn-secondary" onclick="exportData()">💾 備份/下載目前資料</button>
             <button class="btn-secondary" onclick="document.getElementById('importFile').click()">📂 匯入舊備份檔案</button>
@@ -375,8 +395,12 @@
             </div>
         </div>
 
-        <!-- 福岡/由布院 名產快捷鍵 -->
-        <div class="shortcut-container">
+        <button type="button" class="accordion-trigger-btn" onclick="toggleShortcutAccordion()">
+            <span>💡 點選展開/收合：福岡・由布院必買與爆買聖地快捷鍵</span>
+            <span id="accordionArrow">▼</span>
+        </button>
+
+        <div class="shortcut-container" id="shortcutAccordion">
             <div class="shortcut-title">💡 九州在地必買快捷推薦（點選直接代入）：</div>
             <div class="shortcut-tags" style="margin-bottom: 10px;">
                 <span class="tag" onclick="quickFillName('博多通饅頭 (通りもん)')">博多通饅頭</span>
@@ -431,7 +455,6 @@
                     <label for="jpyPrice">日幣價格 (￥)</label>
                     <input type="text" id="jpyPrice" placeholder="可直接輸入算式如 1500*3+500" required oninput="showLiveTwd()">
                     
-                    <!-- 財務拆帳與支付工具控制列 -->
                     <div class="radio-control-group" style="margin-top: 10px;">
                         <label class="radio-label" style="color:#00796b;">
                             <input type="radio" name="purchasePurpose" value="buy" checked> 💰 當下我付，但最後他會給我 (代購)
@@ -468,17 +491,14 @@
         </form>
     </div>
 
-    <!-- 統計與查看區 -->
     <div class="card">
         <h2>2. 每位親友分配明細</h2>
         
-        <!-- 大分類統計花費看板 -->
         <div class="category-summary-dashboard" id="categoryDashboard"></div>
         
         <div id="summaryContainer"></div>
     </div>
 
-    <!-- 總計 Banner -->
     <div class="total-banner">
         <div class="total-row">
             <div>🔴 總計【含稅原價加總】: <span id="grandTotalTaxedJpy">￥0</span> (<span id="grandTotalTaxedTwd">$0</span> TWD)</div>
@@ -495,7 +515,6 @@
             <div style="color: #ffe082;">💵 本次行程累計【付現日幣折合台幣】: <span id="grandCashTwd" style="color:#ffb74d;">$0</span> TWD</div>
         </div>
 
-        <!-- 【本次精準微調】移除「日圓」字樣，純符號極簡化 -->
         <div style="font-size:0.85rem; color:#2a9d8f; text-align: right; border-top: 1px dashed #457b9d; padding-top: 6px; font-weight: bold;">
             🎉 備註：台幣、拆帳與支付工具皆已自動依每筆紀錄鎖定之獨立匯率換算。目前免稅累計省下：<span id="grandTotalSavedJpy" style="color:#2a9d8f;">￥0</span> (約 <span id="grandTotalSavedTwd" style="color:#2a9d8f;">$0</span> TWD)
         </div>
@@ -516,6 +535,19 @@
         buildDatalists();
         renderDashboard();
     };
+
+    // 【全新加入】控制圖片快捷區手風琴摺疊函式
+    function toggleShortcutAccordion() {
+        const el = document.getElementById('shortcutAccordion');
+        const arrow = document.getElementById('accordionArrow');
+        if (el.style.display === 'none') {
+            el.style.display = 'block';
+            arrow.innerText = '▼';
+        } else {
+            el.style.display = 'none';
+            arrow.innerText = '▲';
+        }
+    }
 
     function quickFillName(name) { document.getElementById('giftName').value = name; }
     function quickFillLoc(loc) { document.getElementById('purchaseLocation').value = loc; }
@@ -549,7 +581,6 @@
         }
     }
 
-    // 解析運算式
     function parsePriceInput(inputStr, wantTaxFree, taxPercent = 10) {
         const cleanStr = inputStr.replace(/[^0-9+\-*/().]/g, '');
         if (!cleanStr) return { finalPrice: 0, originalEval: 0, savedTax: 0, taxPercent: 0 };
@@ -940,7 +971,6 @@
         document.getElementById('grandCardTwd').innerText = `$${grandCardTwd.toLocaleString()}`;
         document.getElementById('grandCashTwd').innerText = `$${grandCashTwd.toLocaleString()}`;
         
-        // 渲染純粹 ￥ 符號的省錢大加總數字
         document.getElementById('grandTotalSavedJpy').innerText = `￥${grandSavedTaxJpy.toLocaleString()}`;
         document.getElementById('grandTotalSavedTwd').innerText = `$${grandSavedTaxTwd.toLocaleString()}`;
     }
