@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>福岡・由布院伴手禮採購神器 🛍️ (V24 專業對齊版)</title>
+    <title>福岡・由布院伴手禮採購神器 🛍️ (V25 語意優化版)</title>
     <style>
         :root {
             --primary-color: #d9383a; /* 明太子紅 */
@@ -278,11 +278,11 @@
             display: none;
         }
 
-        /* 🛠️ 【核心排版重塑】強制的左右分軌 Flex 佈局 */
+        /* 左右分軌 Flex 佈局 */
         .gift-item {
             display: flex;
             justify-content: space-between;
-            align-items: center; /* 垂直居中固定 */
+            align-items: center;
             font-size: 0.9rem;
             padding: 12px 0;
             border-bottom: 1px solid #f2ebdf;
@@ -296,7 +296,7 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
-            min-width: 0; /* 防止長文字爆格 */
+            min-width: 0;
         }
         .gift-title-line {
             font-size: 0.95rem;
@@ -337,12 +337,12 @@
             width: fit-content;
         }
 
-        /* 🛠️ 右側（金額區+操作按鈕）完美整合對齊 */
+        /* 右側（金額區+操作按鈕） */
         .gift-right-zone {
             display: flex;
-            align-items: center; /* 讓按鈕與金額垂直居中對齊 */
+            align-items: center;
             gap: 12px;
-            flex-shrink: 0; /* 確保金額按鈕不縮小變形 */
+            flex-shrink: 0;
         }
         .gift-price-zone {
             font-size: 0.85rem;
@@ -362,7 +362,7 @@
         .btn-icon:hover { background: #eee; }
         .btn-icon.delete:hover { background: #ffebee; }
 
-        /* 行內編輯輸入框樣式調整 */
+        /* 行內編輯輸入框樣式 */
         .edit-input-group { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; flex-grow: 1; }
         .edit-input-group input, .edit-input-group select { padding: 4px 6px; font-size: 0.82rem; }
         .input-edit-name { width: 13%; min-width: 60px; }
@@ -403,7 +403,7 @@
 <div class="container">
     <header>
         <h1>九州（福岡・由布院）伴手禮採購神器 🛍️</h1>
-        <p>系統狀態：V24 專業對齊版 (重塑明細結構，強制 Flex 左右分軌與按鈕垂直置中固定)</p>
+        <p>系統狀態：V25 語意優化完全體 (調整表單文字描述，保持強大的左右分軌及鎖定獨立匯率計算)</p>
     </header>
 
     <!-- 設定與輸入區 -->
@@ -488,12 +488,13 @@
                     <label for="jpyPrice">日幣價格 (￥)</label>
                     <input type="text" id="jpyPrice" placeholder="可直接輸入算式如 1500*3+500" required oninput="showLiveTwd()">
                     
+                    <!-- 🛠️ 財務拆帳與目的選項文字優化 -->
                     <div class="radio-control-group" style="margin-top: 10px;">
                         <label class="radio-label" style="color:#00796b;">
-                            <input type="radio" name="purchasePurpose" value="buy" checked> 💰 當下我付，但最後他會給我 (代購)
+                            <input type="radio" name="purchasePurpose" value="buy" checked> 💰 (代購) 他人託付，回台需對外拆帳
                         </label>
                         <label class="radio-label" style="color:#c2185b;">
-                            <input type="radio" name="purchasePurpose" value="gift"> 🎁 這是我花錢送人的 (送禮)
+                            <input type="radio" name="purchasePurpose" value="gift"> 🎁 (送禮) 個人心意，自留或花錢送人
                         </label>
                     </div>
 
@@ -506,9 +507,10 @@
                         </label>
                     </div>
 
+                    <!-- 🛠️ 退稅核取方塊文字優化 -->
                     <div class="tax-control-group">
                         <label class="checkbox-label">
-                            <input type="checkbox" id="taxStatus" onchange="toggleTaxRateInput('add'); showLiveTwd();"> 這價格是「含稅」，幫我改算「免稅價」
+                            <input type="checkbox" id="taxStatus" onchange="toggleTaxRateInput('add'); showLiveTwd();"> 此價格為含稅原價，自動改算免稅價 ￥
                         </label>
                         <div id="taxRateInputBox" class="tax-rate-input-box">
                             <span>稅率：</span>
@@ -816,8 +818,6 @@
         localStorage.setItem('fukuoka_exchange_rate_v14', document.getElementById('exchangeRate').value);
     }
 
-    renderDashboard();
-
     function renderDashboard() {
         const container = document.getElementById('summaryContainer');
         const dashboardEl = document.getElementById('categoryDashboard');
@@ -958,10 +958,8 @@
                         </div>
                     `;
                 } else {
-                    // 🛠️ 調整明細生成結構，完美融合強制的 Flex 左右分軌
                     itemsHtml += `
                         <div class="gift-item" onclick="event.stopPropagation();">
-                            <!-- 左側（資訊區）：大品名 + 下排一橫列徽章 -->
                             <div class="gift-info">
                                 <div class="gift-title-line">🎁 ${item.giftName}</div>
                                 <div class="gift-badges-line">
@@ -975,7 +973,6 @@
                                 ${memoHtml}
                             </div>
                             
-                            <!-- 右側（金額區）：原價與免稅實付靠右，按鈕垂直居中固定在最右側 -->
                             <div class="gift-right-zone">
                                 <div class="gift-price-zone">
                                     <div class="price-row-taxed">原含稅價: ￥${item.originalEval.toLocaleString()} (約 $${twdTaxed.toLocaleString()})</div>
