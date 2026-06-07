@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>福岡・由布院伴手禮採購神器 🛍️ (V19 親友摺疊版)</title>
+    <title>福岡・由布院伴手禮採購神器 🛍️ (V20 財務修正版)</title>
     <style>
         :root {
             --primary-color: #d9383a; /* 明太子紅 */
@@ -252,7 +252,7 @@
             margin-bottom: 10px;
             flex-wrap: wrap;
             gap: 8px;
-            cursor: pointer; /* 讓使用者知道整行可以點擊摺疊 */
+            cursor: pointer;
             user-select: none;
         }
 
@@ -282,10 +282,10 @@
 
         /* 摺疊本體明細容器 */
         .person-gifts-body {
-            display: block; /* 預設展開 */
+            display: block;
         }
         .person-gifts-body.collapsed {
-            display: none; /* 摺疊時隱藏 */
+            display: none;
         }
 
         /* 每一行禮物項目樣式 */
@@ -385,7 +385,7 @@
 <div class="container">
     <header>
         <h1>九州（福岡・由布院）伴手禮採購神器 🛍️</h1>
-        <p>系統狀態：V19 親友明細獨立摺疊版 (保留完整底層財務看板與獨立算式數據)</p>
+        <p>系統狀態：V20 財務邏輯修正版 (修正個人區塊各自鎖定匯率的台幣加總顯示)</p>
     </header>
 
     <div class="card">
@@ -535,7 +535,7 @@
     let giftList = JSON.parse(localStorage.getItem('fukuoka_gifts_v14')) || [];
     let editingId = null;
     
-    // 用於記錄哪些親友被摺疊了 (儲存名字的物件)
+    // 用於記錄哪些親友被摺疊了
     let collapsedState = {}; 
 
     let customGiftNames = JSON.parse(localStorage.getItem('custom_gift_names_v14')) || [];
@@ -561,7 +561,6 @@
         }
     }
 
-    // 控制個別親友名單的收合與折疊
     function togglePersonGifts(personName) {
         collapsedState[personName] = !collapsedState[personName];
         const bodyEl = document.getElementById(`personBody-${personName}`);
@@ -893,18 +892,23 @@
         let htmlContent = '';
         for (const person in groupedData) {
             let personTaxedJpy = 0; let personFreeJpy = 0;
+            let personTaxedTwd = 0; let personFreeTwd = 0; // 🛠️ 新增獨立台幣加總變數
             let itemsHtml = '';
 
-            // 確保折疊狀態有預設值 (預設為 false 展開)
             if (collapsedState[person] === undefined) {
                 collapsedState[person] = false;
             }
 
             groupedData[person].forEach(item => {
                 const itemRate = item.exchangeRate || 0.215;
-                personTaxedJpy += item.originalEval; personFreeJpy += item.jpyPrice;
+                personTaxedJpy += item.originalEval; 
+                personFreeJpy += item.jpyPrice;
+                
                 const twdTaxed = Math.round(item.originalEval * itemRate);
                 const twdFree = Math.round(item.jpyPrice * itemRate);
+                
+                personTaxedTwd += twdTaxed; // 🛠️ 累加每筆計算出來的台幣
+                personFreeTwd += twdFree;   // 🛠️ 累加每筆計算出來的台幣
                 
                 let taxLabel = `<span class="tax-badge">未退稅</span>`;
                 if (item.isTaxFreeComputed) { taxLabel = `<span class="tax-free-badge">已改算免稅 (${item.taxPercent}%)</span>`; }
@@ -970,10 +974,8 @@
                 }
             });
 
-            const currentGlobalRate = parseFloat(document.getElementById('exchangeRate').value) || 0.215;
             const safeItemsJson = JSON.stringify(groupedData[person]).replace(/'/g, "\\'");
             
-            // 根據當前的折疊狀態決定類別與箭頭符號
             const isCollapsed = collapsedState[person];
             const bodyClass = isCollapsed ? 'person-gifts-body collapsed' : 'person-gifts-body';
             const arrowChar = isCollapsed ? '▶' : '▼';
@@ -987,8 +989,8 @@
                             <button class="btn-copy" onclick='copyToClipboard("${person}", ${safeItemsJson}); event.stopPropagation();'>📋 複製 LINE 明細</button>
                         </div>
                         <div class="person-total-box">
-                            <div class="person-total-taxed">含稅原小計: ￥${personTaxedJpy.toLocaleString()} / $${Math.round(personTaxedJpy * currentGlobalRate).toLocaleString()} TWD</div>
-                            <div class="person-total-free">免稅實小計: ￥${personFreeJpy.toLocaleString()} / $${Math.round(personFreeJpy * currentGlobalRate).toLocaleString()} TWD</div>
+                            <div class="person-total-taxed">含稅原小計: ￥${personTaxedJpy.toLocaleString()} / $${personTaxedTwd.toLocaleString()} TWD</div>
+                            <div class="person-total-free">免稅實小計: ￥${personFreeJpy.toLocaleString()} / $${personFreeTwd.toLocaleString()} TWD</div>
                         </div>
                     </div>
                     <div class="${bodyClass}" id="personBody-${person}">
@@ -1000,7 +1002,7 @@
 
         container.innerHTML = htmlContent;
 
-        // 完美同步底層大看板四軌數據與黑色看板
+        // 同步大看板
         document.getElementById('grandTotalTaxedJpy').innerText = `￥${grandTaxedJpy.toLocaleString()}`;
         document.getElementById('grandTotalTaxedTwd').innerText = `$${grandTaxedTwd.toLocaleString()}`;
         document.getElementById('grandTotalFreeJpy').innerText = `￥${grandFreeJpy.toLocaleString()}`;
