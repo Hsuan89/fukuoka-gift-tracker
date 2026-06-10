@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>福岡・由布院伴手禮採購神器 🛍️ (V26 編輯框優化版)</title>
+    <title>福岡・由布院伴手禮採購神器 🛍️ (V27 備註換行版)</title>
     <style>
         :root {
             --primary-color: #d9383a; /* 明太子紅 */
@@ -140,14 +140,21 @@
         .form-group { display: flex; flex-direction: column; }
         .form-group label { font-size: 0.85rem; margin-bottom: 4px; font-weight: bold; }
         
-        input, select {
+        input, select, textarea {
             padding: 8px 12px;
             border: 1px solid var(--border-color);
             border-radius: 6px;
             font-size: 0.95rem;
             outline: none;
+            font-family: inherit;
         }
-        input:focus, select:focus { border-color: var(--primary-color); }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary-color); }
+        
+        /* 🛠️ 調整主要備註欄 textarea 的高度與換行 */
+        textarea {
+            resize: vertical;
+            min-height: 43px;
+        }
 
         /* 單選鈕控制群組樣式 */
         .radio-control-group {
@@ -325,16 +332,18 @@
         .date-badge { background: #e8f8f5; color: #117a65; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; }
         .rate-badge { font-size: 0.7rem; color: #9b59b6; background: #f5eef8; padding: 2px 6px; border-radius: 4px; }
 
-        /* 備註行獨立顯示 */
+        /* 備註行獨立顯示，並設定 white-space: pre-line 以精準呈現換行 */
         .gift-memo-line {
             font-size: 0.8rem;
             color: #7f8c8d;
             background: #f1f3f5;
-            padding: 2px 8px;
+            padding: 4px 8px;
             border-radius: 4px;
             display: inline-block;
             border-left: 3px solid #ced4da;
             width: fit-content;
+            white-space: pre-line; 
+            word-break: break-all;
         }
 
         /* 右側（金額區+操作按鈕） */
@@ -364,18 +373,25 @@
 
         /* 行內編輯輸入框樣式 */
         .edit-input-group { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; flex-grow: 1; }
-        .edit-input-group input, .edit-input-group select { padding: 4px 6px; font-size: 0.82rem; }
+        .edit-input-group input, .edit-input-group select, .edit-input-group textarea { padding: 4px 6px; font-size: 0.82rem; }
         .input-edit-name { width: 13%; min-width: 60px; }
         .input-edit-loc { width: 11%; min-width: 50px; }
         .input-edit-date { width: 12%; min-width: 75px; }
-        .input-edit-memo { width: 12%; min-width: 60px; border-color: #bdc3c7; }
+        
+        /* 🛠️ 編輯狀態下的修改備註改為 textarea 且更緊湊 */
+        .input-edit-memo { 
+            width: 12%; 
+            min-width: 60px; 
+            border-color: #bdc3c7; 
+            height: 28px; 
+            min-height: 28px; 
+            resize: vertical;
+        }
         .input-edit-price { width: 14%; min-width: 55px; }
         .input-edit-rate { width: 9%; min-width: 45px; border-color: #9b59b6; }
-        
-        /* 🛠️ 【本次精準優化】加大「分配明細」區塊中免稅稅率輸入框的長、寬及內襯 padding */
         .input-edit-taxpercent {
-            width: 45px !important; /* 寬度加大，避免內容與控制鈕擠壓 */
-            padding: 4px 6px !important; /* 內襯加厚，更好點擊與閱讀 */
+            width: 45px !important; 
+            padding: 4px 6px !important; 
             font-size: 0.82rem;
             text-align: center;
         }
@@ -411,14 +427,12 @@
 <div class="container">
     <header>
         <h1>九州（福岡・由布院）伴手禮採購神器 🛍️</h1>
-        <p>系統狀態：V26 編輯框優化版 (精準微調分配明細區之行內免稅稅率輸入框大小)</p>
+        <p>系統狀態：V27 備註換行完全體 (主要備註與修改備註全面升級為多行文字區域，支援自由換行)</p>
     </header>
 
-    <!-- 設定與輸入區 -->
     <div class="card">
         <h2>匯率與新增採購紀錄</h2>
         
-        <!-- 備份管理控制區 -->
         <div class="system-actions">
             <button class="btn-danger-outline" onclick="clearAllData()">🗑️ 清空所有清單</button>
         </div>
@@ -430,13 +444,11 @@
             </div>
         </div>
 
-        <!-- 快捷推薦手風琴按鈕 -->
         <button type="button" class="accordion-trigger-btn" onclick="toggleShortcutAccordion()">
             <span>💡 點選展開/收合：福岡・由布院必買與爆買聖地快捷鍵</span>
             <span id="accordionArrow">▼</span>
         </button>
 
-        <!-- 福岡/由布院 名產快捷鍵區塊 -->
         <div class="shortcut-container" id="shortcutAccordion">
             <div class="shortcut-title">💡 九州在地必買快捷推薦（點選直接代入）：</div>
             <div class="shortcut-tags" style="margin-bottom: 10px;">
@@ -465,12 +477,11 @@
             </div>
         </div>
         
-        <!-- 表單 -->
         <form id="giftForm" onsubmit="addGift(event)">
             <div class="grid-inputs">
                 <div class="form-group">
                     <label for="recipient">送給誰（對象）</label>
-                    <input type="text" id="recipient" placeholder="Ref: 例如：家人1、家人123、朋友" required list="recipientPresets">
+                    <input type="text" id="recipient" placeholder="例如：家人1、家人123、朋友" required list="recipientPresets">
                     <datalist id="recipientPresets">
                         <option value="家人1"><option value="家人123"><option value="同事"><option value="朋友"><option value="自用">
                     </datalist>
@@ -530,7 +541,7 @@
 
                 <div class="form-group">
                     <label for="giftMemo">隨手備註（說明）</label>
-                    <input type="text" id="giftMemo" placeholder="例如：藍色包裝、賞味期短" style="height: 43px;">
+                    <textarea id="giftMemo" placeholder="例如：&#10;藍色包裝&#10;賞味期短" style="height: 105px;"></textarea>
                 </div>
             </div>
             
@@ -538,18 +549,14 @@
         </form>
     </div>
 
-    <!-- 統計與查看區 -->
     <div class="card">
         <h2>分配明細</h2>
         
-        <!-- 大分類統計花費看板 -->
         <div class="category-summary-dashboard" id="categoryDashboard"></div>
         
-        <!-- 核心明細展示區 -->
         <div id="summaryContainer"></div>
     </div>
 
-    <!-- 總計 Banner -->
     <div class="total-banner">
         <div class="total-row">
             <div>🔴 總計【含稅原價加總】: <span id="grandTotalTaxedJpy">￥0</span> (<span id="grandTotalTaxedTwd">$0</span> TWD)</div>
@@ -690,7 +697,7 @@
         const giftName = document.getElementById('giftName').value.trim();
         const purchaseLocation = document.getElementById('purchaseLocation').value.trim() || '未記錄地點';
         const purchaseDate = document.getElementById('purchaseDate').value; 
-        const giftMemo = document.getElementById('giftMemo').value.trim() || '';
+        const giftMemo = document.getElementById('giftMemo').value.trim() || ''; // 支援多行字串
         const priceInput = document.getElementById('jpyPrice').value;
         const wantTaxFree = document.getElementById('taxStatus').checked;
         const taxPercent = document.getElementById('taxPercentage').value;
@@ -743,7 +750,7 @@
         const editName = document.getElementById(`editName-${id}`).value.trim();
         const editLoc = document.getElementById(`editLoc-${id}`).value.trim() || '未記錄地點';
         const editDate = document.getElementById(`editDate-${id}`).value; 
-        const editMemo = document.getElementById(`editMemo-${id}`).value.trim();
+        const editMemo = document.getElementById(`editMemo-${id}`).value.trim(); // 支援多行修改
         const editPriceInput = document.getElementById(`editPrice-${id}`).value;
         const editTaxFree = document.getElementById(`editTax-${id}`).checked;
         const editTaxPercent = document.getElementById(`editTaxPct-${id}`).value;
@@ -797,7 +804,7 @@
             
             const purposeStr = item.purpose === 'gift' ? '[🎁送禮]' : '[💰代購]';
             const payStr = item.payment === 'cash' ? '[💵現金]' : '[💳刷卡]';
-            const memoStr = item.memo ? ` (📝備註: ${item.memo})` : '';
+            const memoStr = item.memo ? ` (📝備註: ${item.memo})` : ''; // LINE 複製保持完整文字與換行格式
             const dateStr = item.date ? ` [📅日期: ${item.date}]` : ''; 
             
             text += `${index + 1}. ${item.giftName}${memoStr} ${purposeStr}${payStr}${dateStr}\n`;
@@ -929,7 +936,7 @@
                 
                 const purposeBadge = item.purpose === 'gift' ? `<span class="purpose-badge gift-type">🎁 送禮</span>` : `<span class="purpose-badge buy-type">💰 代購</span>`;
                 const paymentBadge = item.payment === 'cash' ? `<span class="pay-badge cash-type">💵 現金</span>` : `<span class="pay-badge card-type">💳 刷卡</span>`;
-                const memoHtml = item.memo ? `<div class="gift-memo-line">📝 備註: ${item.memo}</div>` : '';
+                const memoHtml = item.memo ? `<div class="gift-memo-line">📝 備註:\n${item.memo}</div>` : '';
                 const dateBadgeHtml = item.date ? `<span class="date-badge">📅 ${item.date}</span>` : '';
 
                 if (editingId === item.id) {
@@ -939,7 +946,7 @@
                                 <input type="text" id="editName-${item.id}" class="input-edit-name" value="${item.giftName}" list="giftNamePresets">
                                 <input type="text" id="editLoc-${item.id}" class="input-edit-loc" value="${item.purchaseLocation}" list="locationPresets">
                                 <input type="date" id="editDate-${item.id}" class="input-edit-date" value="${item.date || ''}">
-                                <input type="text" id="editMemo-${item.id}" class="input-edit-memo" value="${item.memo || ''}" placeholder="修改備註">
+                                <textarea id="editMemo-${item.id}" class="input-edit-memo" placeholder="修改備註">${item.memo || ''}</textarea>
                                 <input type="text" id="editPrice-${item.id}" class="input-edit-price" value="${item.rawPriceInput || item.originalEval}">
                                 <input type="number" id="editRate-${item.id}" class="input-edit-rate" value="${itemRate}" step="0.0001">
                                 <select id="editPurpose-${item.id}" style="padding: 2px; font-size:0.75rem;">
