@@ -3,1584 +3,1045 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>日旅達人手帳 (TabiPay Japan)</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js for visualization -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- FontAwesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Noto Sans TC & Zen Kaku Gothic New -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
-    
+    <title>福岡・由布院伴手禮採購神器 🛍️ (V27 備註換行版)</title>
     <style>
-        body {
-            font-family: 'Zen Kaku Gothic New', 'Noto Sans TC', sans-serif;
-            background-color: #f8fafc;
-            color: #1e293b;
+        :root {
+            --primary-color: #d9383a; /* 明太子紅 */
+            --secondary-color: #2a6f97;
+            --bg-color: #fcfaf7; /* 溫暖的日式米白 */
+            --card-bg: #ffffff;
+            --text-color: #2b2d42;
+            --border-color: #e5e5e5;
+            --success-color: #2a9d8f;
         }
-        /* Hide scrollbars for clean UI while allowing scroll */
-        .no-scrollbar::-webkit-scrollbar {
+
+        body {
+            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 850px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #d9383a, #f26419);
+            color: white;
+            padding: 25px 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(217, 56, 58, 0.2);
+        }
+
+        header h1 { margin: 0 0 8px 0; font-size: 1.7rem; }
+        header p { margin: 0; opacity: 0.9; font-size: 0.9rem; }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            margin-bottom: 20px;
+            border: 1px solid #f0eae1;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 1.15rem;
+            border-left: 4px solid var(--primary-color);
+            padding-left: 10px;
+            margin-bottom: 15px;
+            color: #1a1a1a;
+            font-weight: bold;
+        }
+
+        /* 系統管理按鈕區 */
+        .system-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+            background: #f1f3f5;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .btn-danger-outline {
+            background: #ffffff;
+            color: #e63946;
+            border: 1px solid #ffa5a5;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: auto;
+        }
+        .btn-danger-outline:hover { background: #fff5f5; border-color: #e63946; }
+
+        /* 快捷推薦手風琴樣式 */
+        .accordion-trigger-btn {
+            background-color: #fff5f5;
+            color: #c92a2a;
+            border: 1px dashed #ffccd5;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            outline: none;
+            user-select: none;
+        }
+        .accordion-trigger-btn:hover { background-color: #ffe3e3; }
+        
+        .shortcut-container {
+            background: #fff5f5;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px dashed #ffccd5;
+            margin-bottom: 15px;
+            display: block;
+        }
+        .shortcut-title { font-size: 0.8rem; color: var(--primary-color); margin-bottom: 6px; font-weight: bold; }
+        .shortcut-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+        .tag {
+            background: white;
+            border: 1px solid #ffccd5;
+            color: #c92a2a;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        .tag:hover { background: var(--primary-color); color: white; }
+        .tag.location-tag { color: var(--secondary-color); border-color: #bde0fe; }
+        .tag.location-tag:hover { background: var(--secondary-color); color: white; }
+
+        /* 表單與輸入區 */
+        .grid-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-size: 0.85rem; margin-bottom: 4px; font-weight: bold; }
+        
+        input, select, textarea {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            outline: none;
+            font-family: inherit;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary-color); }
+        
+        /* 🛠️ 調整主要備註欄 textarea 的高度與換行 */
+        textarea {
+            resize: vertical;
+            min-height: 43px;
+        }
+
+        /* 單選鈕控制群組樣式 */
+        .radio-control-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 4px;
+            margin-bottom: 4px;
+        }
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .radio-label input { cursor: pointer; margin: 0; }
+
+        /* 退稅區域設計 */
+        .tax-control-group {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .tax-rate-input-box {
+            display: none;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.85rem;
+        }
+        .tax-rate-input-box input {
+            width: 50px;
+            padding: 4px 6px;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+        .hint-text { font-size: 0.8rem; color: #666; margin-top: 4px; line-height: 1.4; }
+
+        /* 四大分類總花費看板樣式 */
+        .category-summary-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        .category-box {
+            background: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border-left: 4px solid var(--secondary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .category-box.family { border-left-color: #ff9f43; }
+        .category-box.friend { border-left-color: #54a0ff; }
+        .category-box.colleague { border-left-color: #1dd1a1; }
+        .category-box.self { border-left-color: #9b59b6; }
+        .category-box.other { border-left-color: #95a5a6; }
+        .category-title { font-size: 0.8rem; font-weight: bold; color: #555; margin-bottom: 4px; }
+        .category-price-taxed { font-size: 0.75rem; color: #7f8c8d; line-height: 1.3; }
+        .category-price-free { font-size: 0.8rem; color: var(--primary-color); font-weight: bold; line-height: 1.3; }
+
+        /* 親友分組區 */
+        .person-summary {
+            background: #fffcf9;
+            border: 1px solid #f0eae1;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 16px;
+        }
+
+        .person-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed #e5e5e5;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .person-name-box { display: flex; align-items: center; gap: 8px; }
+        .person-name { font-weight: bold; font-size: 1.05rem; color: #1a1a1a; }
+        .person-toggle-arrow { font-size: 0.85rem; color: #888; margin-left: 4px; transition: transform 0.2s; }
+        
+        .btn-copy {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-copy:hover { background: #c8e6c9; }
+
+        .person-total-box {
+            text-align: right;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+        .person-total-taxed { color: #666; }
+        .person-total-free { color: var(--primary-color); font-weight: bold; }
+
+        /* 摺疊本體明細容器 */
+        .person-gifts-body {
+            display: block;
+        }
+        .person-gifts-body.collapsed {
             display: none;
         }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+
+        /* 左右分軌 Flex 佈局 */
+        .gift-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            padding: 12px 0;
+            border-bottom: 1px solid #f2ebdf;
+            gap: 15px;
         }
-        .japanese-pattern {
-            background-color: #ffffff;
-            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
-            background-size: 16px 16px;
+        .gift-item:last-child { border-bottom: none; }
+
+        /* 左側（資訊區）擴展佔滿 */
+        .gift-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
+        }
+        .gift-title-line {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #1a1a1a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        /* 小徽章橫列 */
+        .gift-badges-line {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            align-items: center;
+        }
+        .loc-badge { background: #e2eafc; color: #1d3557; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; }
+        .tax-badge { background: #f1f3f5; color: #6c757d; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; }
+        .tax-free-badge { background: #fff3cd; color: #856404; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; }
+        .purpose-badge { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+        .purpose-badge.gift-type { background: #fce4ec; color: #c2185b; }
+        .purpose-badge.buy-type { background: #e0f2f1; color: #00796b; }
+        .pay-badge { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+        .pay-badge.card-type { background: #e3f2fd; color: #1565c0; }
+        .pay-badge.cash-type { background: #fff3e0; color: #ef6c00; }
+        .date-badge { background: #e8f8f5; color: #117a65; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; }
+        .rate-badge { font-size: 0.7rem; color: #9b59b6; background: #f5eef8; padding: 2px 6px; border-radius: 4px; }
+
+        /* 備註行獨立顯示，並設定 white-space: pre-line 以精準呈現換行 */
+        .gift-memo-line {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            background: #f1f3f5;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            border-left: 3px solid #ced4da;
+            width: fit-content;
+            white-space: pre-line; 
+            word-break: break-all;
+        }
+
+        /* 右側（金額區+操作按鈕） */
+        .gift-right-zone {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+        .gift-price-zone {
+            font-size: 0.85rem;
+            text-align: right;
+            line-height: 1.4;
+            min-width: 160px;
+        }
+        .price-row-taxed { color: #7f8c8d; }
+        .price-row-free { color: #2e7d32; font-weight: bold; }
+
+        .action-btns {
+            display: flex;
+            gap: 2px;
+            align-items: center;
+        }
+        .btn-icon { background: none; border: none; cursor: pointer; font-size: 0.9rem; padding: 4px; border-radius: 4px; }
+        .btn-icon:hover { background: #eee; }
+        .btn-icon.delete:hover { background: #ffebee; }
+
+        /* 行內編輯輸入框樣式 */
+        .edit-input-group { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; flex-grow: 1; }
+        .edit-input-group input, .edit-input-group select, .edit-input-group textarea { padding: 4px 6px; font-size: 0.82rem; }
+        .input-edit-name { width: 13%; min-width: 60px; }
+        .input-edit-loc { width: 11%; min-width: 50px; }
+        .input-edit-date { width: 12%; min-width: 75px; }
+        
+        /* 🛠️ 編輯狀態下的修改備註改為 textarea 且更緊湊 */
+        .input-edit-memo { 
+            width: 12%; 
+            min-width: 60px; 
+            border-color: #bdc3c7; 
+            height: 28px; 
+            min-height: 28px; 
+            resize: vertical;
+        }
+        .input-edit-price { width: 14%; min-width: 55px; }
+        .input-edit-rate { width: 9%; min-width: 45px; border-color: #9b59b6; }
+        .input-edit-taxpercent {
+            width: 45px !important; 
+            padding: 4px 6px !important; 
+            font-size: 0.82rem;
+            text-align: center;
+        }
+
+        /* 總計大看板樣式 */
+        .total-banner {
+            background: #2b2d42;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .total-row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+        .total-banner span { color: #f4a261; font-weight: bold; }
+        
+        .split-dashboard-row {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px dashed #457b9d;
+            padding-top: 8px;
+            font-size: 0.88rem;
+            flex-wrap: wrap;
+            gap: 10px;
         }
     </style>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        matcha: { 50: '#f4f9f4', 100: '#e5f2e5', 500: '#2d6a4f', 600: '#1b4332', 700: '#081c15' },
-                        sakura: { 50: '#fff5f7', 100: '#fee2e8', 500: '#f43f5e', 600: '#e11d48' },
-                        fuji: { 50: '#f0f7ff', 100: '#e0effe', 500: '#0284c7', 600: '#0369a1' },
-                        amberGold: '#d97706',
-                    }
-                }
-            }
-        }
-    </script>
 </head>
-<body class="bg-slate-50 min-h-screen pb-24 text-slate-800 antialiased selection:bg-rose-100 selection:text-rose-700">
+<body>
 
-    <!-- Top Navigation & Live Rate Bar -->
-    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm transition-all">
-        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center space-x-2.5">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-500 to-amber-500 flex items-center justify-center text-white shadow-md shadow-rose-500/20">
-                    <i class="fa-solid fa-torii-gate text-lg"></i>
-                </div>
-                <div>
-                    <div class="flex items-center space-x-1.5">
-                        <h1 class="text-lg font-bold tracking-tight text-slate-900 leading-none">日旅達人手帳</h1>
-                        <span class="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-rose-100 text-rose-700">Japan Edition</span>
-                    </div>
-                    <p class="text-xs text-slate-500 font-medium">80年旅日老行家的隨身記帳錦囊</p>
-                </div>
-            </div>
-
-            <!-- Rate Switcher Pill -->
-            <div class="flex items-center space-x-2 bg-slate-100/80 p-1.5 rounded-xl border border-slate-200/80">
-                <span class="text-xs font-semibold text-slate-500 pl-1.5">匯率 JPY→TWD:</span>
-                <input type="number" id="globalExchangeRate" step="0.001" value="0.215" 
-                    class="w-16 text-center text-xs font-bold py-1 px-1 bg-white rounded-lg border border-slate-300 shadow-inner focus:outline-none focus:ring-2 focus:ring-rose-400 text-slate-800"
-                    onchange="updateExchangeRate(this.value)">
-                <button onclick="refreshRateTooltip()" class="text-slate-400 hover:text-slate-600 px-1" title="匯率試算說明">
-                    <i class="fa-regular fa-circle-question text-xs"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Veteran Quick Summary Strip -->
-        <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-matcha-700 text-white px-4 py-2">
-            <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs">
-                <div class="flex items-center space-x-4">
-                    <span class="flex items-center text-slate-300"><i class="fa-solid fa-wallet mr-1.5 text-amber-400"></i>已支出:</span>
-                    <span class="font-bold text-base text-amber-300 font-mono" id="stripTotalJPY">¥0</span>
-                    <span class="text-slate-400 font-mono">(約 NT$ <span id="stripTotalTWD">0</span>)</span>
-                </div>
-                <div class="flex items-center space-x-3 text-[11px] text-slate-300">
-                    <span class="inline-flex items-center"><span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5"></span>現金: <strong class="ml-1 font-mono text-white" id="stripCashJPY">¥0</strong></span>
-                    <span class="inline-flex items-center"><span class="w-2 h-2 rounded-full bg-sky-400 mr-1.5"></span>IC卡/西瓜: <strong class="ml-1 font-mono text-white" id="stripICJPY">¥0</strong></span>
-                    <span class="inline-flex items-center"><span class="w-2 h-2 rounded-full bg-rose-400 mr-1.5"></span>信用卡: <strong class="ml-1 font-mono text-white" id="stripCardJPY">¥0</strong></span>
-                </div>
-            </div>
-        </div>
+<div class="container">
+    <header>
+        <h1>九州（福岡・由布院）伴手禮採購神器 🛍️</h1>
+        <p>系統狀態：V27 備註換行完全體 (主要備註與修改備註全面升級為多行文字區域，支援自由換行)</p>
     </header>
 
-    <main class="max-w-5xl mx-auto px-4 pt-4 pb-12">
-        <!-- Master Wisdom Tip Card -->
-        <div id="proTipBox" class="mb-5 bg-amber-50 border border-amber-200/90 rounded-2xl p-3.5 shadow-sm flex items-start space-x-3 transition-all">
-            <div class="w-7 h-7 rounded-full bg-amber-200 text-amber-800 flex items-center justify-center shrink-0 mt-0.5 text-xs">
-                <i class="fa-solid fa-lightbulb"></i>
+    <div class="card">
+        <h2>匯率與新增採購紀錄</h2>
+        
+        <div class="system-actions">
+            <button class="btn-danger-outline" onclick="clearAllData()">🗑️ 清空所有清單</button>
+        </div>
+        
+        <div class="grid-inputs" style="grid-template-columns: 1fr;">
+            <div class="form-group">
+                <label for="exchangeRate" style="color: #8e44ad;">輸入此筆紀錄採用的日幣匯率 (JPY ➡️ TWD)</label>
+                <input type="number" id="exchangeRate" value="0.2150" step="0.0001" min="0" oninput="showLiveTwd()">
             </div>
-            <div class="flex-1 text-xs leading-relaxed text-amber-900">
-                <strong class="font-bold">老行家帶路叮嚀：</strong>
-                <span id="randomTipText">日本一般免稅門檻為未稅滿 5,000 日圓（含稅 5,500 日圓）。超商買回飯店吃適用 8% 輕減稅率，內用則是 10% 喔！</span>
-            </div>
-            <button onclick="nextProTip()" class="text-amber-500 hover:text-amber-800 p-1 text-xs shrink-0" title="換下一個達人秘笈">
-                <i class="fa-solid fa-rotate"></i>
-            </button>
         </div>
 
-        <!-- Navigation Tabs -->
-        <div class="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pb-2 mb-4 border-b border-slate-200">
-            <button onclick="switchTab('expenses')" id="tabBtn-expenses" class="tab-btn px-4 py-2 rounded-xl text-sm font-bold transition flex items-center space-x-2 bg-slate-900 text-white shadow-sm">
-                <i class="fa-solid fa-receipt"></i>
-                <span>記帳清單</span>
-            </button>
-            <button onclick="switchTab('souvenirs')" id="tabBtn-souvenirs" class="tab-btn px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-200/60">
-                <i class="fa-solid fa-gift text-rose-500"></i>
-                <span>伴手禮 (分人追蹤)</span>
-                <span id="souvenirBadge" class="ml-1 text-[10px] bg-rose-100 text-rose-700 font-bold px-1.5 py-0.2 rounded-full">0</span>
-            </button>
-            <button onclick="switchTab('food')" id="tabBtn-food" class="tab-btn px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-200/60">
-                <i class="fa-solid fa-utensils text-amber-500"></i>
-                <span>每日飲食專區</span>
-            </button>
-            <button onclick="switchTab('stats')" id="tabBtn-stats" class="tab-btn px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-200/60">
-                <i class="fa-solid fa-chart-pie text-fuji-500"></i>
-                <span>花費圖表分析</span>
-            </button>
-            <button onclick="switchTab('taxcalc')" id="tabBtn-taxcalc" class="tab-btn px-4 py-2 rounded-xl text-sm font-semibold transition flex items-center space-x-2 text-slate-600 hover:bg-slate-200/60">
-                <i class="fa-solid fa-calculator text-emerald-600"></i>
-                <span>免稅/匯率小工具</span>
-            </button>
-        </div>
-
-        <!-- TAB 1: ALL EXPENSES & QUICK FILTERS -->
-        <section id="tab-expenses" class="tab-content">
-            <!-- Filter Bar & Quick Stats -->
-            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm mb-4">
-                <div class="flex flex-wrap items-center justify-between gap-3">
-                    <!-- Category Chips -->
-                    <div class="flex items-center space-x-1.5 overflow-x-auto no-scrollbar py-1">
-                        <button onclick="filterCategory('ALL')" class="cat-filter-btn active px-3 py-1.5 rounded-lg text-xs font-bold transition bg-slate-800 text-white">全部</button>
-                        <button onclick="filterCategory('food')" class="cat-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">🍜 美食</button>
-                        <button onclick="filterCategory('gift')" class="cat-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">🎁 伴手禮</button>
-                        <button onclick="filterCategory('transit')" class="cat-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">🚇 交通</button>
-                        <button onclick="filterCategory('ticket')" class="cat-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">🎫 門票</button>
-                        <button onclick="filterCategory('fun')" class="cat-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">🎮 玩樂</button>
-                        <button onclick="filterCategory('shopping')" class="cat-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">🛍️ 購物</button>
-                        <button onclick="filterCategory('other')" class="cat-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">🏷️ 雜項</button>
-                    </div>
-
-                    <!-- Search & Actions -->
-                    <div class="flex items-center space-x-2 w-full sm:w-auto">
-                        <div class="relative flex-1 sm:w-48">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-slate-400"></i>
-                            <input type="text" id="searchInput" oninput="renderExpensesList()" placeholder="搜尋明細、對象、店名..." 
-                                class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400">
-                        </div>
-                        <button onclick="exportDataModal()" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs rounded-lg font-medium border border-slate-300/80" title="匯出/分享資料">
-                            <i class="fa-solid fa-file-export"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Expense List Container -->
-            <div id="expenseList" class="space-y-3">
-                <!-- Dynamically rendered -->
-            </div>
-
-            <!-- Empty State -->
-            <div id="emptyExpenses" class="hidden py-16 text-center bg-white rounded-2xl border border-slate-200/80 p-8">
-                <div class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400 text-2xl mb-3">
-                    <i class="fa-solid fa-map-location-dot"></i>
-                </div>
-                <h3 class="text-base font-bold text-slate-700">目前尚無此類別記帳紀錄</h3>
-                <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">按下右下角的「+」按鈕，隨手記下你的拉麵、新幹線車票或伴手禮吧！</p>
-            </div>
-        </section>
-
-        <!-- TAB 2: SOUVENIRS (BY RECIPIENT / 分人專區) -->
-        <section id="tab-souvenirs" class="tab-content hidden space-y-4">
-            <!-- Souvenir Strategy Banner -->
-            <div class="bg-gradient-to-r from-rose-50 via-pink-50 to-amber-50 border border-rose-200/80 rounded-2xl p-4 shadow-sm">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                        <div class="flex items-center space-x-2">
-                            <span class="text-lg">🎁</span>
-                            <h2 class="text-base font-bold text-rose-950">伴手禮專屬採買進度</h2>
-                        </div>
-                        <p class="text-xs text-rose-800/80 mt-0.5">出國受託採買、分送親朋好友同事，清清楚楚不怕漏買或超支！</p>
-                    </div>
-                    <button onclick="openSouvenirModal()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold shadow-md shadow-rose-600/20 flex items-center justify-center space-x-1.5 transition">
-                        <i class="fa-solid fa-plus"></i>
-                        <span>新增受贈對象 / 禮物清單</span>
-                    </button>
-                </div>
-                
-                <!-- Recipient Progress Summary Cards -->
-                <div id="souvenirSummaryBadges" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-3 pt-3 border-t border-rose-200/60">
-                    <!-- Injected dynamically -->
-                </div>
-            </div>
-
-            <!-- Souvenir Grouped List -->
-            <div id="souvenirsGroupedContainer" class="space-y-4">
-                <!-- Injected dynamically by person -->
-            </div>
-        </section>
-
-        <!-- TAB 3: DAILY FOOD TRACKING -->
-        <section id="tab-food" class="tab-content hidden space-y-4">
-            <div class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/80 rounded-2xl p-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <div class="flex items-center space-x-2">
-                            <span class="text-lg">🍜</span>
-                            <h2 class="text-base font-bold text-amber-950">每日飲食與超商小吃紀錄</h2>
-                        </div>
-                        <p class="text-xs text-amber-800/80 mt-0.5">檢視每天三餐與超商宵夜的花費分佈，吃得滿足又在預算內！</p>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-[10px] uppercase font-bold text-amber-700">累計餐飲花費</span>
-                        <div class="text-lg font-bold text-amber-900 font-mono" id="foodTotalAmount">¥0</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Food Day By Day Accordion / Cards -->
-            <div id="foodDayList" class="space-y-3">
-                <!-- Rendered dynamically -->
-            </div>
-        </section>
-
-        <!-- TAB 4: CHARTS & ANALYTICS -->
-        <section id="tab-stats" class="tab-content hidden space-y-5">
-            <!-- High Level Summary Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-                    <span class="text-xs font-semibold text-slate-500 block mb-1"><i class="fa-solid fa-coins text-amber-500 mr-1.5"></i>總支出 (日圓 / 台幣)</span>
-                    <div class="text-xl font-black text-slate-800 font-mono" id="statGrandTotalJPY">¥0</div>
-                    <div class="text-xs font-bold text-slate-400 mt-0.5">約 NT$ <span id="statGrandTotalTWD">0</span></div>
-                </div>
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-                    <span class="text-xs font-semibold text-slate-500 block mb-1"><i class="fa-solid fa-percent text-rose-500 mr-1.5"></i>已累積免稅消費 (未稅5,000円標籤)</span>
-                    <div class="text-xl font-black text-rose-600 font-mono" id="statTaxFreeTotal">¥0</div>
-                    <div class="text-[11px] text-slate-500 mt-0.5">享有 10% 或 8% 消費稅退稅優惠</div>
-                </div>
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-                    <span class="text-xs font-semibold text-slate-500 block mb-1"><i class="fa-solid fa-credit-card text-fuji-500 mr-1.5"></i>最常用的支付方式</span>
-                    <div class="text-base font-black text-slate-800 mt-1" id="statTopPaymentMethod">-</div>
-                    <div class="text-[11px] text-slate-400">現金與非現金交易比例</div>
-                </div>
-            </div>
-
-            <!-- Charts Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Category Chart -->
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                    <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center justify-between">
-                        <span><i class="fa-solid fa-pie-chart text-slate-600 mr-2"></i>消費類別佔比</span>
-                    </h3>
-                    <div class="h-60 relative flex items-center justify-center">
-                        <canvas id="categoryChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Payment Method Chart -->
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                    <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center justify-between">
-                        <span><i class="fa-solid fa-wallet text-emerald-600 mr-2"></i>支付管道分佈</span>
-                    </h3>
-                    <div class="h-60 relative flex items-center justify-center">
-                        <canvas id="paymentChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB 5: VETERAN TOOLS & TAX CALCULATOR -->
-        <section id="tab-taxcalc" class="tab-content hidden space-y-4">
-            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center">
-                    <i class="fa-solid fa-calculator text-matcha-600 mr-2"></i>
-                    日本購物「含稅 / 未稅 / 免稅」快速試算機
-                </h3>
-                <p class="text-xs text-slate-500 mb-4">輸入商品標價（含稅或未稅），快速得知換算台幣及是否達到 5,000 日圓退稅門檻。</p>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">標籤日圓金額 (¥)</label>
-                        <input type="number" id="calcInputAmount" placeholder="如 5500" value="5500" oninput="runTaxCalculation()" 
-                            class="w-full text-base font-bold py-2 px-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-matcha-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">輸入金額屬於</label>
-                        <select id="calcType" onchange="runTaxCalculation()" class="w-full text-xs font-medium py-2.5 px-3 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none">
-                            <option value="withTax10">含稅 (一般商品 10%)</option>
-                            <option value="withTax8">含稅 (食品/外帶 8%)</option>
-                            <option value="noTax">未稅標價 (稅拔)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">自訂換算匯率</label>
-                        <input type="number" id="calcRateInput" step="0.001" value="0.215" oninput="runTaxCalculation()" 
-                            class="w-full text-xs font-bold py-2 px-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-matcha-500 focus:outline-none">
-                    </div>
-                </div>
-
-                <!-- Result Box -->
-                <div id="taxCalcResult" class="p-4 bg-slate-50 rounded-xl border border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-                    <!-- Calculated dynamically -->
-                </div>
-            </div>
-
-            <!-- Veteran Japan Travel Cheat Sheet -->
-            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-                <h3 class="text-sm font-bold text-slate-800 flex items-center">
-                    <i class="fa-solid fa-feather-pointed text-rose-500 mr-2"></i>
-                    80年老行家的日本行花費生存法則
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                        <strong class="text-slate-800 font-bold block mb-1"><i class="fa-solid fa-coins text-amber-500 mr-1"></i>硬幣消滅術</strong>
-                        日本有 1円、5円、10円、50円、100円、500円。搭車或超商結帳時，可先將大把零錢倒入自動售票機充值西瓜卡 (Suica/Pasmo) 或超商自動結帳機，是最優雅的清零錢秘笈！
-                    </div>
-                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                        <strong class="text-slate-800 font-bold block mb-1"><i class="fa-solid fa-train-subway text-fuji-500 mr-1"></i>交通 IC 卡 vs 地鐵一日券</strong>
-                        短程跨線或公車直接刷 Suica/ICOCA 方便無比；若是東京、大阪市區密集跑 4 個景點以上，購買 24/48 小時地鐵 Pass 通常能省下 500~800 日圓。
-                    </div>
-                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                        <strong class="text-slate-800 font-bold block mb-1"><i class="fa-solid fa-box-open text-emerald-600 mr-1"></i>免稅品特別注意</strong>
-                        消耗品（藥妝、食品等）密封袋在日本境內**絕對不能拆封**，否則離境時海關抽查會被要求補繳 10% 消費稅。
-                    </div>
-                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                        <strong class="text-slate-800 font-bold block mb-1"><i class="fa-solid fa-utensils text-rose-500 mr-1"></i>餐廳 Otoshi (小菜費)</strong>
-                        居酒屋入座常會送上一道未點的小碟小菜（お通し），通常約 300~600 日圓/人，這在日本是傳統的座位費/服務費，記帳時記得算入喔！
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Floating Add Button -->
-    <div class="fixed bottom-6 right-6 z-40 flex flex-col items-end space-y-2">
-        <button onclick="openAddExpenseModal()" 
-            class="w-14 h-14 bg-gradient-to-tr from-rose-600 to-amber-500 text-white rounded-2xl shadow-xl shadow-rose-600/30 flex items-center justify-center text-xl hover:scale-105 active:scale-95 transition-all"
-            title="新增一筆日本花費">
-            <i class="fa-solid fa-plus"></i>
+        <button type="button" class="accordion-trigger-btn" onclick="toggleShortcutAccordion()">
+            <span>💡 點選展開/收合：福岡・由布院必買與爆買聖地快捷鍵</span>
+            <span id="accordionArrow">▼</span>
         </button>
-    </div>
 
-    <!-- MODAL: ADD / EDIT EXPENSE -->
-    <div id="expenseModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all my-8">
-            <div class="bg-gradient-to-r from-slate-900 to-matcha-700 px-5 py-4 text-white flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <span class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center text-sm">
-                        <i class="fa-solid fa-pen-nib"></i>
-                    </span>
-                    <h3 class="font-bold text-base" id="modalExpenseTitle">記下一筆日本花費</h3>
+        <div class="shortcut-container" id="shortcutAccordion">
+            <div class="shortcut-title">💡 九州在地必買快捷推薦（點選直接代入）：</div>
+            <div class="shortcut-tags" style="margin-bottom: 10px;">
+                <span class="tag" onclick="quickFillName('博多通饅頭 (通りもん)')">博多通饅頭</span>
+                <span class="tag" onclick="quickFillName('福太郎 明太子仙貝 (めんべい)')">明太子仙貝</span>
+                <span class="tag" onclick="quickFillName('博多ひよ子 (小雞蛋糕)')">博多ひよ子小雞蛋糕</span>
+                <span class="tag" onclick="quickFillName('一蘭拉麵 帶回家包裝')">一蘭拉麵包</span>
+                <span class="tag" onclick="quickFillName('努努雞 (冰炸雞)')">努努雞</span>
+                <span class="tag" onclick="quickFillName('茅乃舍高湯包')">茅乃舍高湯</span>
+                <span class="tag" onclick="quickFillName('由布院 B-speak 瑞士捲')">🧁 由布院 B-speak</span>
+                <span class="tag" onclick="quickFillName('由布院 Milch 起司蛋糕')">🧀 由布院 Milch</span>
+                <span class="tag" onclick="quickFillName('由布院 金賞可樂餅')">🥔 由布院 金賞可樂餅</span>
+                <span class="tag" onclick="quickFillName('合利他命 EX Plus')">💊 合利他命 EX</span>
+                <span class="tag" onclick="quickFillName('百貨專櫃限定美妝')">💄 百貨專櫃美妝</span>
+            </div>
+            
+            <div class="shortcut-title">📍 行程爆買地點快捷推薦（點選直接代入）：</div>
+            <div class="shortcut-tags">
+                <span class="tag location-tag" onclick="quickFillLoc('博多車站')">博多車站</span>
+                <span class="tag location-tag" onclick="quickFillLoc('天神地下街')">天神地下街</span>
+                <span class="tag location-tag" onclick="quickFillLoc('由布院溫泉街')">♨️ 由布院溫泉街</span>
+                <span class="tag location-tag" onclick="quickFillLoc('福岡市區藥妝店')">💊 福岡市區藥妝店</span>
+                <span class="tag location-tag" onclick="quickFillLoc('唐吉訶德')">🐧 唐吉訶德</span>
+                <span class="tag location-tag" onclick="quickFillLoc('各大百貨公司')">🏢 各大百貨公司</span>
+                <span class="tag location-tag" onclick="quickFillLoc('福岡機場免稅店')">✈️ 福岡機場免稅店</span>
+            </div>
+        </div>
+        
+        <form id="giftForm" onsubmit="addGift(event)">
+            <div class="grid-inputs">
+                <div class="form-group">
+                    <label for="recipient">送給誰（對象）</label>
+                    <input type="text" id="recipient" placeholder="例如：家人1、家人123、朋友" required list="recipientPresets">
+                    <datalist id="recipientPresets">
+                        <option value="家人1"><option value="家人123"><option value="同事"><option value="朋友"><option value="自用">
+                    </datalist>
                 </div>
-                <button onclick="closeExpenseModal()" class="text-white/80 hover:text-white p-1 text-sm">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+                <div class="form-group">
+                    <label for="giftName">伴手禮品名</label>
+                    <input type="text" id="giftName" placeholder="請輸入或點選名產" required list="giftNamePresets">
+                    <datalist id="giftNamePresets"></datalist>
+                </div>
+                <div class="form-group">
+                    <label for="purchaseLocation">購買地點</label>
+                    <input type="text" id="purchaseLocation" placeholder="例如：博多車站" list="locationPresets">
+                    <datalist id="locationPresets"></datalist>
+                </div>
+                <div class="form-group">
+                    <label for="purchaseDate">購買日期</label>
+                    <input type="date" id="purchaseDate" required>
+                </div>
             </div>
 
-            <form id="expenseForm" onsubmit="handleExpenseSubmit(event)" class="p-5 space-y-4 max-h-[80vh] overflow-y-auto">
-                <input type="hidden" id="editExpenseId" value="">
+            <div class="grid-inputs" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+                <div class="form-group">
+                    <label for="jpyPrice">日幣價格 (￥)</label>
+                    <input type="text" id="jpyPrice" placeholder="可直接輸入算式如 1500*3+500" required oninput="showLiveTwd()">
+                    
+                    <div class="radio-control-group" style="margin-top: 10px;">
+                        <label class="radio-label" style="color:#00796b;">
+                            <input type="radio" name="purchasePurpose" value="buy" checked> 💰 (代購) 他人託付，回台需對外拆帳
+                        </label>
+                        <label class="radio-label" style="color:#c2185b;">
+                            <input type="radio" name="purchasePurpose" value="gift"> 🎁 (送禮) 個人心意，自留或花錢送人
+                        </label>
+                    </div>
 
-                <!-- Category Selection -->
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-2">消費分類</label>
-                    <div class="grid grid-cols-4 gap-2 text-xs">
-                        <label class="cat-radio-label flex flex-col items-center p-2 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50 transition text-center">
-                            <input type="radio" name="modalCategory" value="food" class="hidden" checked onchange="toggleCategoryFields('food')">
-                            <span class="text-lg mb-1">🍜</span>
-                            <span class="font-semibold text-[11px]">美食餐飲</span>
+                    <div class="radio-control-group" style="border-top: 1px dashed #ced4da; padding-top: 4px;">
+                        <label class="radio-label" style="color:#1565c0;">
+                            <input type="radio" name="paymentMethod" value="card" checked> 💳 信用卡刷卡消费
                         </label>
-                        <label class="cat-radio-label flex flex-col items-center p-2 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50 transition text-center">
-                            <input type="radio" name="modalCategory" value="gift" class="hidden" onchange="toggleCategoryFields('gift')">
-                            <span class="text-lg mb-1">🎁</span>
-                            <span class="font-semibold text-[11px]">伴手禮</span>
-                        </label>
-                        <label class="cat-radio-label flex flex-col items-center p-2 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50 transition text-center">
-                            <input type="radio" name="modalCategory" value="transit" class="hidden" onchange="toggleCategoryFields('transit')">
-                            <span class="text-lg mb-1">🚇</span>
-                            <span class="font-semibold text-[11px]">交通票券</span>
-                        </label>
-                        <label class="cat-radio-label flex flex-col items-center p-2 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50 transition text-center">
-                            <input type="radio" name="modalCategory" value="ticket" class="hidden" onchange="toggleCategoryFields('ticket')">
-                            <span class="text-lg mb-1">🎫</span>
-                            <span class="font-semibold text-[11px]">景點門票</span>
-                        </label>
-                        <label class="cat-radio-label flex flex-col items-center p-2 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50 transition text-center">
-                            <input type="radio" name="modalCategory" value="fun" class="hidden" onchange="toggleCategoryFields('fun')">
-                            <span class="text-lg mb-1">🎮</span>
-                            <span class="font-semibold text-[11px]">玩樂體驗</span>
-                        </label>
-                        <label class="cat-radio-label flex flex-col items-center p-2 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50 transition text-center">
-                            <input type="radio" name="modalCategory" value="shopping" class="hidden" onchange="toggleCategoryFields('shopping')">
-                            <span class="text-lg mb-1">🛍️</span>
-                            <span class="font-semibold text-[11px]">購物藥妝</span>
-                        </label>
-                        <label class="cat-radio-label flex flex-col items-center p-2 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50 transition text-center">
-                            <input type="radio" name="modalCategory" value="hotel" class="hidden" onchange="toggleCategoryFields('hotel')">
-                            <span class="text-lg mb-1">🏨</span>
-                            <span class="font-semibold text-[11px]">住宿/稅</span>
-                        </label>
-                        <label class="cat-radio-label flex flex-col items-center p-2 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-50 transition text-center">
-                            <input type="radio" name="modalCategory" value="other" class="hidden" onchange="toggleCategoryFields('other')">
-                            <span class="text-lg mb-1">🏷️</span>
-                            <span class="font-semibold text-[11px]">其他支出</span>
+                        <label class="radio-label" style="color:#ef6c00;">
+                            <input type="radio" name="paymentMethod" value="cash"> 💵 日幣現金支付
                         </label>
                     </div>
-                </div>
 
-                <!-- Title & Amount in JPY -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">項目名稱 *</label>
-                        <input type="text" id="expenseItemTitle" required placeholder="如：一蘭拉麵、晴空塔門票"
-                            class="w-full px-3 py-2 text-xs font-medium border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-400 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">日圓金額 (JPY ¥) *</label>
-                        <div class="relative">
-                            <span class="absolute left-3 top-2 font-mono font-bold text-xs text-slate-400">¥</span>
-                            <input type="number" id="expenseItemJPY" required min="1" placeholder="1280" oninput="calculateModalTWD()"
-                                class="w-full pl-7 pr-3 py-2 text-sm font-bold font-mono border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-400 focus:outline-none">
-                        </div>
-                        <div class="text-[11px] text-slate-400 mt-0.5 text-right font-mono">
-                            折合約 NT$ <span id="modalTWDPreview" class="font-bold text-slate-600">0</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Food Specific Context: Breakfast/Lunch/Dinner/Snack -->
-                <div id="foodSpecificSection" class="p-3 bg-amber-50/60 rounded-xl border border-amber-200/60 space-y-1">
-                    <label class="block text-xs font-bold text-amber-900">餐點時段</label>
-                    <div class="flex items-center space-x-2 text-xs">
-                        <label class="flex items-center space-x-1 cursor-pointer">
-                            <input type="radio" name="mealPeriod" value="朝食 (早餐)" checked class="text-amber-600">
-                            <span>朝食 (早餐)</span>
+                    <div class="tax-control-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="taxStatus" onchange="toggleTaxRateInput('add'); showLiveTwd();"> 此價格為含稅原價，自動改算免稅價 ￥
                         </label>
-                        <label class="flex items-center space-x-1 cursor-pointer">
-                            <input type="radio" name="mealPeriod" value="晝食 (午餐)" class="text-amber-600">
-                            <span>晝食 (午餐)</span>
-                        </label>
-                        <label class="flex items-center space-x-1 cursor-pointer">
-                            <input type="radio" name="mealPeriod" value="夕食 (晚餐)" class="text-amber-600">
-                            <span>夕食 (晚餐)</span>
-                        </label>
-                        <label class="flex items-center space-x-1 cursor-pointer">
-                            <input type="radio" name="mealPeriod" value="超商/宵夜/喫茶" class="text-amber-600">
-                            <span>超商/點心</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Gift Specific Context: Recipient Target -->
-                <div id="giftSpecificSection" class="p-3 bg-rose-50/60 rounded-xl border border-rose-200/60 space-y-2 hidden">
-                    <div class="flex items-center justify-between">
-                        <label class="text-xs font-bold text-rose-900">伴手禮受贈對象 (分人) *</label>
-                        <span class="text-[10px] text-rose-700">例如：爸媽、主管、好友小美、自己</span>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <input type="text" id="giftRecipientInput" placeholder="填寫對象姓名或身份 (如：親愛的媽媽)"
-                            class="flex-1 px-3 py-1.5 text-xs border border-rose-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-rose-400 bg-white">
-                        <!-- Quick presets -->
-                        <div class="flex space-x-1">
-                            <button type="button" onclick="setRecipientFast('家人')" class="px-2 py-1 bg-white border border-rose-200 text-[10px] rounded hover:bg-rose-100">家人</button>
-                            <button type="button" onclick="setRecipientFast('同事')" class="px-2 py-1 bg-white border border-rose-200 text-[10px] rounded hover:bg-rose-100">同事</button>
-                            <button type="button" onclick="setRecipientFast('自己')" class="px-2 py-1 bg-white border border-rose-200 text-[10px] rounded hover:bg-rose-100">自己</button>
+                        <div id="taxRateInputBox" class="tax-rate-input-box">
+                            <span>稅率：</span>
+                            <input type="number" id="taxPercentage" value="10" step="0.1" min="0" max="100" oninput="showLiveTwd()">
+                            <span>%</span>
                         </div>
                     </div>
+                    
+                    <span class="hint-text" id="liveTwdHint">解析金額：￥0 (約 $0 TWD)</span>
                 </div>
 
-                <!-- Payment Method & Date -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">支付方式</label>
-                        <select id="expensePaymentMethod" class="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-400 font-medium">
-                            <option value="現金 (Cash)">💴 現金 (Cash / 零錢)</option>
-                            <option value="Suica / IC卡">🐧 IC卡 (Suica / ICOCA / Pasmo)</option>
-                            <option value="信用卡 / 晶片卡">💳 信用卡 (海外回饋卡)</option>
-                            <option value="PayPay / 街口支付">📱 PayPay / 行動條碼支付</option>
-                            <option value="JR Pass / 交通票券">🎫 交通通票 / 事前預購</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">消費日期</label>
-                        <input type="date" id="expenseDateInput" required class="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-400">
-                    </div>
+                <div class="form-group">
+                    <label for="giftMemo">隨手備註（說明）</label>
+                    <textarea id="giftMemo" placeholder="例如：&#10;藍色包裝&#10;賞味期短" style="height: 105px;"></textarea>
                 </div>
-
-                <!-- Tax Free & Location Note -->
-                <div class="space-y-2 pt-1 border-t border-slate-100">
-                    <div class="flex items-center justify-between">
-                        <label class="flex items-center space-x-2 cursor-pointer">
-                            <input type="checkbox" id="expenseIsTaxFree" class="rounded text-rose-600 focus:ring-rose-400 w-4 h-4">
-                            <span class="text-xs font-semibold text-slate-700">此筆已享免稅 (Tax Free / 滿5000円)</span>
-                        </label>
-                        <span class="text-[10px] text-slate-400">日本免稅省8%~10%</span>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">店家/備註 (如：心齋橋大丸、唐吉訶德)</label>
-                        <input type="text" id="expenseNoteInput" placeholder="選填，記錄購買地點或心得"
-                            class="w-full px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-300">
-                    </div>
-                </div>
-
-                <div class="pt-2 flex items-center justify-end space-x-2">
-                    <button type="button" onclick="closeExpenseModal()" class="px-4 py-2 text-xs font-semibold text-slate-500 hover:text-slate-800">
-                        取消
-                    </button>
-                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-xl shadow transition">
-                        儲存紀錄
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL: ADD SOUVENIR WISHLIST / GIFT TARGET -->
-    <div id="souvenirModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
-        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-slate-100 overflow-hidden">
-            <div class="bg-gradient-to-r from-rose-600 to-pink-600 px-5 py-4 text-white flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-gift"></i>
-                    <h3 class="font-bold text-base">新增伴手禮採買任務</h3>
-                </div>
-                <button onclick="closeSouvenirModal()" class="text-white/80 hover:text-white p-1 text-sm">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
             </div>
-
-            <form id="souvenirForm" onsubmit="handleSouvenirSubmit(event)" class="p-5 space-y-3.5">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">收件對象 (送給誰？) *</label>
-                    <input type="text" id="planRecipient" required placeholder="如：林部長、大學好友、爸媽"
-                        class="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-400 focus:outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">想買的伴手禮名稱 *</label>
-                    <input type="text" id="planItem" required placeholder="如：白色戀人、獺祭二割三分、東京香蕉蛋糕"
-                        class="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-400 focus:outline-none">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">預算 (JPY ¥)</label>
-                        <input type="number" id="planBudgetJPY" placeholder="如 2000"
-                            class="w-full px-3 py-2 text-xs font-mono border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-400 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">採買地點 / 店舖</label>
-                        <input type="text" id="planStore" placeholder="如：成田機場Fa-So-La"
-                            class="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-rose-400 focus:outline-none">
-                    </div>
-                </div>
-
-                <div class="pt-2 flex items-center justify-end space-x-2">
-                    <button type="button" onclick="closeSouvenirModal()" class="px-4 py-2 text-xs font-semibold text-slate-500 hover:text-slate-800">
-                        取消
-                    </button>
-                    <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-xl shadow transition">
-                        加入採買清單
-                    </button>
-                </div>
-            </form>
-        </div>
+            
+            <button type="submit" class="btn-submit">➕ 新增至清單</button>
+        </form>
     </div>
 
-    <!-- Custom Modal for Data Export / Copy -->
-    <div id="exportModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
-        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-5 space-y-4">
-            <div class="flex items-center justify-between border-b pb-3">
-                <h3 class="font-bold text-base text-slate-800 flex items-center">
-                    <i class="fa-solid fa-share-nodes text-slate-600 mr-2"></i>
-                    旅遊花費報表與結算文字
-                </h3>
-                <button onclick="closeExportModal()" class="text-slate-400 hover:text-slate-600 p-1">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <p class="text-xs text-slate-500">可一鍵複製文字明細發送至 LINE 群組，或備份行程開銷：</p>
-            <textarea id="exportTextArea" rows="9" readonly class="w-full p-3 font-mono text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none select-all text-slate-700 leading-relaxed"></textarea>
-            <div class="flex items-center justify-end space-x-2">
-                <button onclick="copyExportText()" class="px-4 py-2 text-xs font-bold text-white bg-matcha-600 hover:bg-matcha-700 rounded-xl shadow flex items-center space-x-1">
-                    <i class="fa-regular fa-copy"></i>
-                    <span>複製到剪貼簿</span>
-                </button>
-            </div>
-        </div>
+    <div class="card">
+        <h2>分配明細</h2>
+        
+        <div class="category-summary-dashboard" id="categoryDashboard"></div>
+        
+        <div id="summaryContainer"></div>
     </div>
 
-    <!-- Custom Toast Message Notification -->
-    <div id="toastNotification" class="fixed top-20 right-4 z-50 transform translate-y-[-20px] opacity-0 transition-all duration-300 pointer-events-none">
-        <div class="bg-slate-900/95 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center space-x-2 text-xs border border-slate-700">
-            <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
-            <span id="toastMsg" class="font-medium">已成功儲存</span>
+    <div class="total-banner">
+        <div class="total-row">
+            <div>🔴 總計【含稅原價加總】: <span id="grandTotalTaxedJpy">￥0</span> (<span id="grandTotalTaxedTwd">$0</span> TWD)</div>
+            <div style="color:#a8dadc;">🟢 總計【免稅實付加總】: <span id="grandTotalFreeJpy">￥0</span> (<span id="grandTotalFreeTwd">$0</span> TWD)</div>
+        </div>
+        
+        <div class="split-dashboard-row">
+            <div style="color: #4db6ac;">🏦 回台預計可對外【應收代購總額】: <span id="grandBuyTwd" style="color:#26a69a;">$0</span> TWD</div>
+            <div style="color: #f06292;">💸 本次九州行【我主動送禮總花費】: <span id="grandGiftTwd" style="color:#ec407a;">$0</span> TWD</div>
+        </div>
+
+        <div class="split-dashboard-row" style="border-top-color: #555c7a;">
+            <div style="color: #90caf9;">💳 本次行程累計【刷卡消費台幣總額】: <span id="grandCardTwd" style="color:#42a5f5;">$0</span> TWD</div>
+            <div style="color: #ffe082;">💵 本次行程累計【付現日幣折合台幣】: <span id="grandCashTwd" style="color:#ffb74d;">$0</span> TWD</div>
+        </div>
+
+        <div style="font-size:0.85rem; color:#2a9d8f; text-align: right; border-top: 1px dashed #457b9d; padding-top: 6px; font-weight: bold;">
+            🎉 備註：台幣、拆帳與支付工具皆已自動依每筆紀錄鎖定之獨立匯率換算。目前免稅累計省下：<span id="grandTotalSavedJpy">￥0</span> (約 <span id="grandTotalSavedTwd">$0</span> TWD)
         </div>
     </div>
+</div>
 
-    <script>
-        let exchangeRate = 0.215; // default 1 JPY = 0.215 TWD
-        let activeCategoryFilter = 'ALL';
-        let categoryChartInstance = null;
-        let paymentChartInstance = null;
+<script>
+    let giftList = JSON.parse(localStorage.getItem('fukuoka_gifts_v14')) || [];
+    let editingId = null;
+    let collapsedState = {}; 
 
-        const PRO_TIPS = [
-            "日本一般免稅門檻為未稅滿 5,000 日圓（含稅 5,500 日圓）。超商買回飯店吃適用 8% 輕減稅率，內用則是 10% 喔！",
-            "Suica/ICOCA 可以綁定 Apple Wallet，隨手用手機嗶進站，還能在各大超商、自動販賣機輕鬆感應扣款！",
-            "日本餐廳結帳習慣是在門口櫃檯買單，不是在桌上掏錢給店員；零錢請放在藍色或金色小托盤上。",
-            "購買免稅商品在出境前「切勿拆開特殊密封膠帶」，否則海關抽驗到視同已在國內使用，須補稅款。",
-            "大部分神社御守與朱印只能付現金（神佛信仰無刷卡），造訪寺廟前務必準備充足的百円與五百円硬幣。",
-            "新幹線若攜帶特大行李（長寬高三邊合計超過160cm），記得先在售票機或 SmartEX 劃位附帶行李放置處的座位。"
-        ];
-        let currentTipIndex = 0;
+    let customGiftNames = JSON.parse(localStorage.getItem('custom_gift_names_v14')) || [];
+    let customLocations = JSON.parse(localStorage.getItem('custom_locations_v14')) || [];
 
-        // Rich initial travel sample data
-        let expensesData = [
-            {
-                id: 'exp-1',
-                category: 'transit',
-                title: '成田特快 N\'EX 往新宿',
-                amountJPY: 4070,
-                paymentMethod: '信用卡 / 晶片卡',
-                date: '2026-09-01',
-                isTaxFree: false,
-                mealPeriod: '',
-                recipient: '',
-                note: 'JR 東日本旅行服務中心購買'
-            },
-            {
-                id: 'exp-2',
-                category: 'food',
-                title: '一蘭拉麵 新宿中央東口店',
-                amountJPY: 1380,
-                paymentMethod: '現金 (Cash)',
-                date: '2026-09-01',
-                isTaxFree: false,
-                mealPeriod: '夕食 (晚餐)',
-                recipient: '',
-                note: '加半熟鹽煮蛋與叉燒，天然豚骨湯頭'
-            },
-            {
-                id: 'exp-3',
-                category: 'gift',
-                title: '獺祭二割三分 純米大吟釀',
-                amountJPY: 6200,
-                paymentMethod: '信用卡 / 晶片卡',
-                date: '2026-09-01',
-                isTaxFree: true,
-                mealPeriod: '',
-                recipient: '老爸',
-                note: '銀座三越免稅專櫃購買'
-            },
-            {
-                id: 'exp-4',
-                category: 'ticket',
-                title: 'SHIBUYA SKY 展望台入場門票',
-                amountJPY: 2500,
-                paymentMethod: '信用卡 / 晶片卡',
-                date: '2026-09-02',
-                isTaxFree: false,
-                mealPeriod: '',
-                recipient: '',
-                note: '夕陽時段預約，俯瞰澀谷十字路口'
-            },
-            {
-                id: 'exp-5',
-                category: 'food',
-                title: '7-Eleven 炸雞、飯糰、綾鷹綠茶',
-                amountJPY: 650,
-                paymentMethod: 'Suica / IC卡',
-                date: '2026-09-02',
-                isTaxFree: false,
-                mealPeriod: '超商/宵夜/喫茶',
-                recipient: '',
-                note: '回飯店前補給，適用 8% 輕減外帶稅率'
-            },
-            {
-                id: 'exp-6',
-                category: 'gift',
-                title: '銀座夾心餅乾禮盒 (共2盒)',
-                amountJPY: 3600,
-                paymentMethod: '信用卡 / 晶片卡',
-                date: '2026-09-02',
-                isTaxFree: false,
-                mealPeriod: '',
-                recipient: '辦公室部門同事',
-                note: '下午茶分送每人一包剛好'
-            },
-            {
-                id: 'exp-7',
-                category: 'fun',
-                title: '秋葉原扭蛋 & 寶可夢機台',
-                amountJPY: 1500,
-                paymentMethod: '現金 (Cash)',
-                date: '2026-09-02',
-                isTaxFree: false,
-                mealPeriod: '',
-                recipient: '',
-                note: '投了3顆吉伊卡哇扭蛋'
+    let savedRate = localStorage.getItem('fukuoka_exchange_rate_v14');
+    if (savedRate) { document.getElementById('exchangeRate').value = savedRate; }
+
+    window.onload = function() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('purchaseDate').value = today;
+
+        buildDatalists();
+        renderDashboard();
+    };
+
+    function toggleShortcutAccordion() {
+        const el = document.getElementById('shortcutAccordion');
+        const arrow = document.getElementById('accordionArrow');
+        if (el.style.display === 'none') {
+            el.style.display = 'block';
+            arrow.innerText = '▼';
+        } else {
+            el.style.display = 'none';
+            arrow.innerText = '▲';
+        }
+    }
+
+    function togglePersonGifts(personName) {
+        collapsedState[personName] = !collapsedState[personName];
+        const bodyEl = document.getElementById(`personBody-${personName}`);
+        const arrowEl = document.getElementById(`personArrow-${personName}`);
+        
+        if (collapsedState[personName]) {
+            bodyEl.classList.add('collapsed');
+            arrowEl.innerText = '▶';
+        } else {
+            bodyEl.classList.remove('collapsed');
+            arrowEl.innerText = '▼';
+        }
+    }
+
+    function quickFillName(name) { document.getElementById('giftName').value = name; }
+    function quickFillLoc(loc) { document.getElementById('purchaseLocation').value = loc; }
+
+    function buildDatalists() {
+        const defaultGifts = ['博多通饅頭 (通りもん)', '福太郎 明太子仙貝 (めんべい)', '博多ひよ子 (小雞蛋糕)', '一蘭拉麵 帶回家包裝', '努努雞 (冰炸雞)', '茅乃舍高湯包', '由布院 B-speak 瑞士捲', '由布院 Milch 起司蛋糕', '由布院 金賞可樂餅', '合利他命 EX Plus', '百貨專櫃限定美妝'];
+        const finalGifts = [...new Set([...defaultGifts, ...customGiftNames])];
+        document.getElementById('giftNamePresets').innerHTML = finalGifts.map(g => `<option value="${g}">`).join('');
+
+        const defaultLocs = ['博多車站', '天神地下街', '由布院溫泉街', '福岡市區藥妝店', '唐吉訶德', '各大百貨公司', '福岡機場免稅店'];
+        const finalLocs = [...new Set([...defaultLocs, ...customLocations])];
+        document.getElementById('locationPresets').innerHTML = finalLocs.map(l => `<option value="${l}">`).join('');
+    }
+
+    function detectCategory(recipientStr) {
+        const str = recipientStr.toLowerCase();
+        if (str.includes('家') || str.includes('爸') || str.includes('媽') || str.includes('哥') || str.includes('姐') || str.includes('弟') || str.includes('妹')) return 'family';
+        if (str.includes('朋') || str.includes('友') || str.includes('同學')) return 'friend';
+        if (str.includes('同') || str.includes('事') || str.includes('公') || str.includes('司') || str.includes('老闆')) return 'colleague';
+        if (str.includes('自') || str.includes('我')) return 'self';
+        return 'other';
+    }
+
+    function toggleTaxRateInput(mode, id = null) {
+        if (mode === 'add') {
+            const isChecked = document.getElementById('taxStatus').checked;
+            document.getElementById('taxRateInputBox').style.display = isChecked ? 'flex' : 'none';
+        } else if (mode === 'edit' && id) {
+            const isChecked = document.getElementById(`editTax-${id}`).checked;
+            document.getElementById(`editTaxBox-${id}`).style.display = isChecked ? 'flex' : 'none';
+        }
+    }
+
+    function parsePriceInput(inputStr, wantTaxFree, taxPercent = 10) {
+        const cleanStr = inputStr.replace(/[^0-9+\-*/().]/g, '');
+        if (!cleanStr) return { finalPrice: 0, originalEval: 0, savedTax: 0, taxPercent: 0 };
+        try {
+            let result = new Function(`return (${cleanStr})`)();
+            result = Math.round(parseFloat(result) || 0);
+            const pct = parseFloat(taxPercent) || 0;
+            if (wantTaxFree && pct > 0) {
+                const taxFreePrice = Math.round(result / (1 + (pct / 100)));
+                return { finalPrice: taxFreePrice, originalEval: result, savedTax: result - taxFreePrice, isTaxFreeComputed: true, taxPercent: pct };
+            } else {
+                return { finalPrice: result, originalEval: result, savedTax: 0, isTaxFreeComputed: false, taxPercent: 0 };
             }
-        ];
+        } catch (e) { return { finalPrice: 0, originalEval: 0, savedTax: 0, taxPercent: 0 }; }
+    }
 
-        let souvenirsWishlist = [
-            {
-                id: 'souv-1',
-                recipient: '老爸',
-                item: '獺祭二割三分 純米大吟釀',
-                budgetJPY: 6500,
-                store: '百貨地下街或機場',
-                isPurchased: true,
-                actualExpenseId: 'exp-3'
-            },
-            {
-                id: 'souv-2',
-                recipient: '辦公室部門同事',
-                item: '銀座夾心餅乾禮盒',
-                budgetJPY: 4000,
-                store: '銀座松屋 / 東京車站',
-                isPurchased: true,
-                actualExpenseId: 'exp-6'
-            },
-            {
-                id: 'souv-3',
-                recipient: '好姊妹小雅',
-                item: 'SHIRO 白茶香水 & 潤唇膏',
-                budgetJPY: 5500,
-                store: '新宿Lumine',
-                isPurchased: false,
-                actualExpenseId: null
-            },
-            {
-                id: 'souv-4',
-                recipient: '自己',
-                item: '吉伊卡哇東京限定吊飾',
-                budgetJPY: 2000,
-                store: '東京一番街 Character Street',
-                isPurchased: false,
-                actualExpenseId: null
-            }
-        ];
+    function showLiveTwd() {
+        const rate = parseFloat(document.getElementById('exchangeRate').value) || 0;
+        const priceInput = document.getElementById('jpyPrice').value;
+        const wantTaxFree = document.getElementById('taxStatus').checked;
+        const taxPercent = document.getElementById('taxPercentage').value;
+        
+        const parsed = parsePriceInput(priceInput, wantTaxFree, taxPercent);
+        const twdFree = Math.round(parsed.finalPrice * rate);
+        const twdTaxed = Math.round(parsed.originalEval * rate);
+        
+        let hint = `解析：含稅 ￥${parsed.originalEval.toLocaleString()} (約 $${twdTaxed.toLocaleString()} TWD)`;
+        if (parsed.isTaxFreeComputed) {
+            hint += ` ➡️ 免稅 ￥${parsed.finalPrice.toLocaleString()} (約 $${twdFree.toLocaleString()} TWD) <span style="color:#2a9d8f;">[省￥${parsed.savedTax}]</span>`;
+        }
+        hint += `<br><span style="color:#8e44ad; font-size:0.75rem;">💾 新增時將會鎖定當前匯率：${rate.toFixed(4)}</span>`;
+        document.getElementById('liveTwdHint').innerHTML = hint;
+    }
 
-        const CATEGORIES = {
-            food: { name: '美食餐飲', icon: 'fa-utensils', emoji: '🍜', color: 'bg-amber-100 text-amber-800 border-amber-200' },
-            gift: { name: '伴手禮', icon: 'fa-gift', emoji: '🎁', color: 'bg-rose-100 text-rose-800 border-rose-200' },
-            transit: { name: '交通票券', icon: 'fa-train-subway', emoji: '🚇', color: 'bg-sky-100 text-sky-800 border-sky-200' },
-            ticket: { name: '景點門票', icon: 'fa-ticket', emoji: '🎫', color: 'bg-indigo-100 text-indigo-800 border-indigo-200' },
-            fun: { name: '玩樂體驗', icon: 'fa-gamepad', emoji: '🎮', color: 'bg-purple-100 text-purple-800 border-purple-200' },
-            shopping: { name: '購物藥妝', icon: 'fa-bag-shopping', emoji: '🛍️', color: 'bg-emerald-100 text-emerald-800 border-emerald-200' },
-            hotel: { name: '住宿/稅', icon: 'fa-hotel', emoji: '🏨', color: 'bg-slate-100 text-slate-800 border-slate-200' },
-            other: { name: '其他支出', icon: 'fa-tag', emoji: '🏷️', color: 'bg-gray-100 text-gray-800 border-gray-200' },
+    function addGift(event) {
+        event.preventDefault();
+
+        const recipient = document.getElementById('recipient').value.trim();
+        const giftName = document.getElementById('giftName').value.trim();
+        const purchaseLocation = document.getElementById('purchaseLocation').value.trim() || '未記錄地點';
+        const purchaseDate = document.getElementById('purchaseDate').value; 
+        const giftMemo = document.getElementById('giftMemo').value.trim() || ''; // 支援多行字串
+        const priceInput = document.getElementById('jpyPrice').value;
+        const wantTaxFree = document.getElementById('taxStatus').checked;
+        const taxPercent = document.getElementById('taxPercentage').value;
+        const currentRate = parseFloat(document.getElementById('exchangeRate').value) || 0;
+        
+        const purpose = document.querySelector('input[name="purchasePurpose"]:checked').value;
+        const payment = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+        const parsed = parsePriceInput(priceInput, wantTaxFree, taxPercent);
+        if (parsed.originalEval <= 0) { alert("請輸入正確的金額或算式！"); return; }
+
+        if (giftName && !customGiftNames.includes(giftName)) {
+            customGiftNames.push(giftName);
+            localStorage.setItem('custom_gift_names_v14', JSON.stringify(customGiftNames));
+        }
+        if (purchaseLocation && purchaseLocation !== '未記錄地點' && !customLocations.includes(purchaseLocation)) {
+            customLocations.push(purchaseLocation);
+            localStorage.setItem('custom_locations_v14', JSON.stringify(customLocations));
+        }
+
+        const gift = {
+            id: Date.now(), recipient, giftName, purchaseLocation, 
+            date: purchaseDate, 
+            memo: giftMemo, rawPriceInput: priceInput,
+            jpyPrice: parsed.finalPrice, originalEval: parsed.originalEval, savedTax: parsed.savedTax,
+            isTaxFreeComputed: parsed.isTaxFreeComputed, taxPercent: parsed.taxPercent, exchangeRate: currentRate,
+            purpose: purpose, payment: payment
         };
 
-        window.addEventListener('DOMContentLoaded', () => {
-            // Set today's date in form default
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('expenseDateInput').value = today;
+        giftList.push(gift);
+        saveToStorage();
+        
+        document.getElementById('giftName').value = '';
+        document.getElementById('purchaseLocation').value = '';
+        document.getElementById('giftMemo').value = '';
+        document.getElementById('jpyPrice').value = '';
+        document.getElementById('taxStatus').checked = false;
+        document.getElementById('taxPercentage').value = '10';
+        toggleTaxRateInput('add');
+        showLiveTwd();
 
-            // Render all components
-            refreshAllViews();
-            runTaxCalculation();
+        buildDatalists();
+        renderDashboard();
+    }
+
+    function startEdit(id) { editingId = id; renderDashboard(); }
+    function cancelEdit() { editingId = null; renderDashboard(); }
+
+    function saveEdit(id) {
+        const editName = document.getElementById(`editName-${id}`).value.trim();
+        const editLoc = document.getElementById(`editLoc-${id}`).value.trim() || '未記錄地點';
+        const editDate = document.getElementById(`editDate-${id}`).value; 
+        const editMemo = document.getElementById(`editMemo-${id}`).value.trim(); // 支援多行修改
+        const editPriceInput = document.getElementById(`editPrice-${id}`).value;
+        const editTaxFree = document.getElementById(`editTax-${id}`).checked;
+        const editTaxPercent = document.getElementById(`editTaxPct-${id}`).value;
+        const editRate = parseFloat(document.getElementById(`editRate-${id}`).value) || 0;
+        const editPurpose = document.getElementById(`editPurpose-${id}`).value;
+        const editPayment = document.getElementById(`editPayment-${id}`).value;
+
+        const parsed = parsePriceInput(editPriceInput, editTaxFree, editTaxPercent);
+        if (!editName || parsed.originalEval <= 0) { alert("請輸入有效的內容與金額！"); return; }
+
+        giftList = giftList.map(item => {
+            if (item.id === id) {
+                return { 
+                    ...item, giftName: editName, purchaseLocation: editLoc, 
+                    date: editDate, 
+                    memo: editMemo, rawPriceInput: editPriceInput,
+                    jpyPrice: parsed.finalPrice, originalEval: parsed.originalEval, savedTax: parsed.savedTax,
+                    isTaxFreeComputed: parsed.isTaxFreeComputed, taxPercent: parsed.taxPercent, exchangeRate: editRate,
+                    purpose: editPurpose, payment: editPayment
+                };
+            }
+            return item;
         });
 
-        function refreshAllViews() {
-            renderHeaderStrip();
-            renderExpensesList();
-            renderSouvenirsTab();
-            renderFoodTab();
-            renderStatsTab();
+        editingId = null;
+        saveToStorage();
+        renderDashboard();
+    }
+
+    function deleteGift(id) {
+        if(confirm("確定要刪除這筆紀錄嗎？")) {
+            giftList = giftList.filter(item => item.id !== id);
+            if (editingId === id) editingId = null;
+            saveToStorage();
+            renderDashboard();
+        }
+    }
+
+    function copyToClipboard(personName, items) {
+        let text = `【福岡・由布院伴手禮明細 🛒 送給：${personName}】\n`;
+        let totalTaxedJpy = 0; let totalFreeJpy = 0;
+        let totalBuyTwd = 0; let totalGiftTwd = 0;
+        
+        items.forEach((item, index) => {
+            totalTaxedJpy += item.originalEval; totalFreeJpy += item.jpyPrice;
+            const itemRate = item.exchangeRate || 0.215;
+            const twdFree = Math.round(item.jpyPrice * itemRate);
+            const twdTaxed = Math.round(item.originalEval * itemRate);
+            
+            if (item.purpose === 'gift') { totalGiftTwd += twdFree; } else { totalBuyTwd += twdFree; }
+            
+            const purposeStr = item.purpose === 'gift' ? '[🎁送禮]' : '[💰代購]';
+            const payStr = item.payment === 'cash' ? '[💵現金]' : '[💳刷卡]';
+            const memoStr = item.memo ? ` (📝備註: ${item.memo})` : ''; // LINE 複製保持完整文字與換行格式
+            const dateStr = item.date ? ` [📅日期: ${item.date}]` : ''; 
+            
+            text += `${index + 1}. ${item.giftName}${memoStr} ${purposeStr}${payStr}${dateStr}\n`;
+            text += `   📍 地點: ${item.purchaseLocation} (匯率:${itemRate.toFixed(4)})\n`;
+            if (item.isTaxFreeComputed) {
+                text += `   🔸 含稅原價: ￥${item.originalEval.toLocaleString()} (約 NT$ ${twdTaxed.toLocaleString()})\n`;
+                text += `   🔹 免稅實付: ￥${item.jpyPrice.toLocaleString()} (約 NT$ ${twdFree.toLocaleString()}) [省${item.taxPercent}%]\n`;
+            } else {
+                text += `   🔸 購買價格: ￥${item.jpyPrice.toLocaleString()} (約 NT$ ${twdFree.toLocaleString()}) [未退稅]\n`;
+            }
+        });
+        
+        text += `-----------------------\n`;
+        text += `📊 【${personName}】個人帳目結算：\n`;
+        if (totalBuyTwd > 0) { text += `💰 👉 【親友代購需轉帳給我的金額】：NT$ ${totalBuyTwd.toLocaleString()} 元\n`; }
+        if (totalGiftTwd > 0) { text += `🎁 💕 【心意送禮/自留花費免收錢】：NT$ ${totalGiftTwd.toLocaleString()} 元\n`; }
+        text += `(實付日幣小計：￥${totalFreeJpy.toLocaleString()})`;
+
+        navigator.clipboard.writeText(text).then(() => { alert("🎉 已成功複製明細！"); }).catch(err => { alert("複製失敗！"); });
+    }
+
+    function saveToStorage() {
+        localStorage.setItem('fukuoka_gifts_v14', JSON.stringify(giftList));
+        localStorage.setItem('fukuoka_exchange_rate_v14', document.getElementById('exchangeRate').value);
+    }
+
+    function renderDashboard() {
+        const container = document.getElementById('summaryContainer');
+        const dashboardEl = document.getElementById('categoryDashboard');
+        
+        if (giftList.length === 0) {
+            dashboardEl.innerHTML = '';
+            container.innerHTML = '<p style="text-align: center; color: #999; margin: 20px 0;">目前還沒有新增任何伴手禮喔！快去博多車站、由布院街或天神爆買吧！🛍️</p>';
+            document.getElementById('grandTotalTaxedJpy').innerText = `￥0`;
+            document.getElementById('grandTotalTaxedTwd').innerText = `$0`;
+            document.getElementById('grandTotalFreeJpy').innerText = `￥0`;
+            document.getElementById('grandTotalFreeTwd').innerText = `$0`;
+            document.getElementById('grandBuyTwd').innerText = `$0`;
+            document.getElementById('grandGiftTwd').innerText = `$0`;
+            document.getElementById('grandCardTwd').innerText = `$0`;
+            document.getElementById('grandCashTwd').innerText = `$0`;
+            document.getElementById('grandTotalSavedJpy').innerText = `￥0`;
+            document.getElementById('grandTotalSavedTwd').innerText = `$0`;
+            return;
         }
 
-        function updateExchangeRate(newRate) {
-            const parsed = parseFloat(newRate);
-            if (!isNaN(parsed) && parsed > 0) {
-                exchangeRate = parsed;
-                document.getElementById('calcRateInput').value = parsed;
-                showToast(`匯率已更新為 1 JPY = ${parsed} TWD`);
-                refreshAllViews();
+        const catTotals = {
+            family: { name: '👨‍👩‍👧‍👦 家人分類', taxedJpy: 0, freeJpy: 0, taxedTwd: 0, freeTwd: 0 },
+            friend: { name: '👥 朋友分類', taxedJpy: 0, freeJpy: 0, taxedTwd: 0, freeTwd: 0 },
+            colleague: { name: '💼 同事分類', taxedJpy: 0, freeJpy: 0, taxedTwd: 0, freeTwd: 0 },
+            self: { name: '🛍️ 自用分類', taxedJpy: 0, freeJpy: 0, taxedTwd: 0, freeTwd: 0 },
+            other: { name: '❓ 其他分類', taxedJpy: 0, freeJpy: 0, taxedTwd: 0, freeTwd: 0 }
+        };
+
+        const groupedData = {};
+        let grandTaxedJpy = 0; let grandFreeJpy = 0; 
+        let grandTaxedTwd = 0; let grandFreeTwd = 0;
+        let grandBuyTwd = 0;   let grandGiftTwd = 0;
+        let grandCardTwd = 0;  let grandCashTwd = 0;
+        let grandSavedTaxJpy = 0;
+        let grandSavedTaxTwd = 0;
+
+        giftList.forEach(item => {
+            const itemRate = item.exchangeRate || 0.215;
+            const itemTaxedTwd = Math.round(item.originalEval * itemRate);
+            const itemFreeTwd = Math.round(item.jpyPrice * itemRate);
+
+            grandTaxedJpy += item.originalEval; 
+            grandFreeJpy += item.jpyPrice; 
+            grandTaxedTwd += itemTaxedTwd; 
+            grandFreeTwd += itemFreeTwd;
+            
+            if (item.savedTax) {
+                grandSavedTaxJpy += item.savedTax;
+                grandSavedTaxTwd += Math.round(item.savedTax * itemRate);
+            }
+            
+            if (item.purpose === 'gift') { grandGiftTwd += itemFreeTwd; } else { grandBuyTwd += itemFreeTwd; }
+            if (item.payment === 'cash') { grandCashTwd += itemFreeTwd; } else { grandCardTwd += itemFreeTwd; }
+
+            const cat = detectCategory(item.recipient);
+            catTotals[cat].taxedJpy += item.originalEval;
+            catTotals[cat].freeJpy += item.jpyPrice;
+            catTotals[cat].taxedTwd += itemTaxedTwd;
+            catTotals[cat].freeTwd += itemFreeTwd;
+
+            if (!groupedData[item.recipient]) { groupedData[item.recipient] = []; }
+            groupedData[item.recipient].push(item);
+        });
+
+        let dashHtml = '';
+        for (const key in catTotals) {
+            const c = catTotals[key];
+            if (c.taxedJpy > 0) {
+                dashHtml += `
+                    <div class="category-box ${key}">
+                        <div class="category-title">${c.name}</div>
+                        <div class="category-price-taxed">原含稅: ￥${c.taxedJpy.toLocaleString()} ($${c.taxedTwd.toLocaleString()})</div>
+                        <div class="category-price-free">免稅實: ￥${c.freeJpy.toLocaleString()} ($${c.freeTwd.toLocaleString()})</div>
+                    </div>
+                `;
             }
         }
+        dashboardEl.innerHTML = dashHtml;
 
-        function showToast(msg, iconClass = "fa-circle-check text-emerald-400") {
-            const toast = document.getElementById('toastNotification');
-            document.getElementById('toastMsg').textContent = msg;
-            document.getElementById('toastIcon').className = `fa-solid ${iconClass} text-sm`;
-            toast.classList.remove('opacity-0', 'translate-y-[-20px]');
-            toast.classList.add('opacity-100', 'translate-y-0');
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-[-20px]');
-                toast.classList.remove('opacity-100', 'translate-y-0');
-            }, 2500);
-        }
+        let htmlContent = '';
+        for (const person in groupedData) {
+            let personTaxedJpy = 0; let personFreeJpy = 0;
+            let personTaxedTwd = 0; let personFreeTwd = 0; 
+            let itemsHtml = '';
 
-        function nextProTip() {
-            currentTipIndex = (currentTipIndex + 1) % PRO_TIPS.length;
-            document.getElementById('randomTipText').textContent = PRO_TIPS[currentTipIndex];
-        }
-
-        function refreshRateTooltip() {
-            showToast(`目前計算基準：10,000 日圓 約為 NT$ ${(10000 * exchangeRate).toFixed(0)}`, 'fa-circle-info text-sky-400');
-        }
-
-        function switchTab(tabKey) {
-            const tabs = ['expenses', 'souvenirs', 'food', 'stats', 'taxcalc'];
-            tabs.forEach(key => {
-                const content = document.getElementById(`tab-${key}`);
-                const btn = document.getElementById(`tabBtn-${key}`);
-                if (key === tabKey) {
-                    content.classList.remove('hidden');
-                    btn.classList.add('bg-slate-900', 'text-white', 'shadow-sm');
-                    btn.classList.remove('text-slate-600', 'hover:bg-slate-200/60');
-                } else {
-                    content.classList.add('hidden');
-                    btn.classList.remove('bg-slate-900', 'text-white', 'shadow-sm');
-                    btn.classList.add('text-slate-600', 'hover:bg-slate-200/60');
-                }
-            });
-
-            if (tabKey === 'stats') {
-                setTimeout(initOrUpdateCharts, 100);
-            }
-        }
-
-        function renderHeaderStrip() {
-            let totalJPY = 0;
-            let cashJPY = 0;
-            let icJPY = 0;
-            let cardJPY = 0;
-
-            expensesData.forEach(exp => {
-                totalJPY += exp.amountJPY;
-                if (exp.paymentMethod.includes('現金')) {
-                    cashJPY += exp.amountJPY;
-                } else if (exp.paymentMethod.includes('IC卡') || exp.paymentMethod.includes('Suica')) {
-                    icJPY += exp.amountJPY;
-                } else {
-                    cardJPY += exp.amountJPY;
-                }
-            });
-
-            const totalTWD = Math.round(totalJPY * exchangeRate);
-
-            document.getElementById('stripTotalJPY').textContent = `¥${totalJPY.toLocaleString()}`;
-            document.getElementById('stripTotalTWD').textContent = totalTWD.toLocaleString();
-            document.getElementById('stripCashJPY').textContent = `¥${cashJPY.toLocaleString()}`;
-            document.getElementById('stripICJPY').textContent = `¥${icJPY.toLocaleString()}`;
-            document.getElementById('stripCardJPY').textContent = `¥${cardJPY.toLocaleString()}`;
-
-            // Update badge on souvenir tab
-            const pendingGifts = souvenirsWishlist.filter(g => !g.isPurchased).length;
-            document.getElementById('souvenirBadge').textContent = pendingGifts;
-        }
-
-        function filterCategory(cat) {
-            activeCategoryFilter = cat;
-            document.querySelectorAll('.cat-filter-btn').forEach(btn => {
-                btn.classList.remove('bg-slate-800', 'text-white');
-                btn.classList.add('bg-slate-100', 'text-slate-600');
-            });
-            event.currentTarget.classList.add('bg-slate-800', 'text-white');
-            event.currentTarget.classList.remove('bg-slate-100', 'text-slate-600');
-            renderExpensesList();
-        }
-
-        function renderExpensesList() {
-            const listEl = document.getElementById('expenseList');
-            const emptyEl = document.getElementById('emptyExpenses');
-            const keyword = (document.getElementById('searchInput').value || '').trim().toLowerCase();
-
-            let filtered = expensesData.filter(item => {
-                const matchCat = activeCategoryFilter === 'ALL' || item.category === activeCategoryFilter;
-                const matchKeyword = !keyword || 
-                    item.title.toLowerCase().includes(keyword) || 
-                    (item.recipient && item.recipient.toLowerCase().includes(keyword)) ||
-                    (item.note && item.note.toLowerCase().includes(keyword));
-                return matchCat && matchKeyword;
-            });
-
-            // Sort newest first
-            filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-            if (filtered.length === 0) {
-                listEl.innerHTML = '';
-                emptyEl.classList.remove('hidden');
-                return;
+            if (collapsedState[person] === undefined) {
+                collapsedState[person] = false;
             }
 
-            emptyEl.classList.add('hidden');
-            listEl.innerHTML = filtered.map(item => {
-                const catInfo = CATEGORIES[item.category] || CATEGORIES.other;
-                const twd = Math.round(item.amountJPY * exchangeRate);
+            groupedData[person].forEach(item => {
+                const itemRate = item.exchangeRate || 0.215;
+                personTaxedJpy += item.originalEval; 
+                personFreeJpy += item.jpyPrice;
                 
-                // Recipient tag
-                const recipientTag = item.recipient 
-                    ? `<span class="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
-                         <i class="fa-solid fa-user-tag text-[9px] mr-1"></i>對象: ${escapeHtml(item.recipient)}
-                       </span>`
-                    : '';
+                const twdTaxed = Math.round(item.originalEval * itemRate);
+                const twdFree = Math.round(item.jpyPrice * itemRate);
+                
+                personTaxedTwd += twdTaxed; 
+                personFreeTwd += twdFree;   
+                
+                let taxLabel = `<span class="tax-badge">未退稅</span>`;
+                if (item.isTaxFreeComputed) { taxLabel = `<span class="tax-free-badge">已改算免稅 (${item.taxPercent}%)</span>`; }
+                
+                const purposeBadge = item.purpose === 'gift' ? `<span class="purpose-badge gift-type">🎁 送禮</span>` : `<span class="purpose-badge buy-type">💰 代購</span>`;
+                const paymentBadge = item.payment === 'cash' ? `<span class="pay-badge cash-type">💵 現金</span>` : `<span class="pay-badge card-type">💳 刷卡</span>`;
+                const memoHtml = item.memo ? `<div class="gift-memo-line">📝 備註:\n${item.memo}</div>` : '';
+                const dateBadgeHtml = item.date ? `<span class="date-badge">📅 ${item.date}</span>` : '';
 
-                // Tax free tag
-                const taxFreeTag = item.isTaxFree
-                    ? `<span class="inline-flex items-center text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
-                         <i class="fa-solid fa-check-circle mr-1"></i>免稅 Tax-Free
-                       </span>`
-                    : '';
-
-                // Meal period tag
-                const mealTag = item.mealPeriod
-                    ? `<span class="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
-                         ${escapeHtml(item.mealPeriod)}
-                       </span>`
-                    : '';
-
-                return `
-                <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-sm hover:border-slate-300 transition-all flex items-center justify-between group">
-                    <div class="flex items-start space-x-3 min-w-0 flex-1 pr-3">
-                        <div class="w-10 h-10 rounded-xl ${catInfo.color} flex items-center justify-center shrink-0 text-base shadow-sm">
-                            ${catInfo.emoji}
-                        </div>
-                        <div class="min-w-0 flex-1">
-                            <div class="flex items-center flex-wrap gap-1.5 mb-1">
-                                <h4 class="font-bold text-slate-800 text-sm truncate">${escapeHtml(item.title)}</h4>
-                                ${recipientTag}
-                                ${taxFreeTag}
-                                ${mealTag}
+                if (editingId === item.id) {
+                    itemsHtml += `
+                        <div class="gift-item" style="background: #fff3cd; padding: 6px; border-radius: 6px;" onclick="event.stopPropagation();">
+                            <div class="edit-input-group">
+                                <input type="text" id="editName-${item.id}" class="input-edit-name" value="${item.giftName}" list="giftNamePresets">
+                                <input type="text" id="editLoc-${item.id}" class="input-edit-loc" value="${item.purchaseLocation}" list="locationPresets">
+                                <input type="date" id="editDate-${item.id}" class="input-edit-date" value="${item.date || ''}">
+                                <textarea id="editMemo-${item.id}" class="input-edit-memo" placeholder="修改備註">${item.memo || ''}</textarea>
+                                <input type="text" id="editPrice-${item.id}" class="input-edit-price" value="${item.rawPriceInput || item.originalEval}">
+                                <input type="number" id="editRate-${item.id}" class="input-edit-rate" value="${itemRate}" step="0.0001">
+                                <select id="editPurpose-${item.id}" style="padding: 2px; font-size:0.75rem;">
+                                    <option value="buy" ${item.purpose === 'buy' ? 'selected' : ''}>💰 代購</option>
+                                    <option value="gift" ${item.purpose === 'gift' ? 'selected' : ''}>🎁 送禮</option>
+                                </select>
+                                <select id="editPayment-${item.id}" style="padding: 2px; font-size:0.75rem;">
+                                    <option value="card" ${item.payment === 'card' ? 'selected' : ''}>💳 刷卡</option>
+                                    <option value="cash" ${item.payment === 'cash' ? 'selected' : ''}>💵 現金</option>
+                                </select>
+                                <label style="font-size: 0.7rem; font-weight: bold; display: flex; align-items: center; gap: 1px;">
+                                    <input type="checkbox" id="editTax-${item.id}" ${item.isTaxFreeComputed ? 'checked' : ''} onchange="toggleTaxRateInput('edit', ${item.id})"> 免稅
+                                </label>
+                                <div id="editTaxBox-${item.id}" style="display: ${item.isTaxFreeComputed ? 'flex' : 'none'}; align-items: center; gap: 1px; font-size: 0.7rem;">
+                                    <input type="number" id="editTaxPct-${item.id}" value="${item.taxPercent || 10}" class="input-edit-taxpercent">%
+                                </div>
                             </div>
-                            <div class="flex items-center flex-wrap gap-x-3 gap-y-1 text-xs text-slate-500 font-medium">
-                                <span><i class="fa-regular fa-calendar text-[11px] mr-1"></i>${item.date}</span>
-                                <span><i class="fa-solid fa-wallet text-[11px] mr-1"></i>${escapeHtml(item.paymentMethod)}</span>
-                                ${item.note ? `<span class="truncate max-w-[200px] text-slate-400"><i class="fa-regular fa-note-sticky text-[11px] mr-1"></i>${escapeHtml(item.note)}</span>` : ''}
+                            <div class="action-btns">
+                                <button class="btn-icon" onclick="saveEdit(${item.id}); event.stopPropagation();">💾</button>
+                                <button class="btn-icon" onclick="cancelEdit(); event.stopPropagation();">↩️</button>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Right amount & actions -->
-                    <div class="flex items-center space-x-3 shrink-0">
-                        <div class="text-right">
-                            <div class="text-base font-extrabold text-slate-900 font-mono">¥${item.amountJPY.toLocaleString()}</div>
-                            <div class="text-[11px] font-medium text-slate-400 font-mono">約 NT$ ${twd.toLocaleString()}</div>
+                    `;
+                } else {
+                    itemsHtml += `
+                        <div class="gift-item" onclick="event.stopPropagation();">
+                            <div class="gift-info">
+                                <div class="gift-title-line">🎁 ${item.giftName}</div>
+                                <div class="gift-badges-line">
+                                    ${purposeBadge}
+                                    ${paymentBadge}
+                                    <span class="loc-badge">📍 ${item.purchaseLocation}</span>
+                                    ${taxLabel}
+                                    ${dateBadgeHtml}
+                                    <span class="rate-badge">💱 匯率: ${itemRate.toFixed(4)}</span>
+                                </div>
+                                ${memoHtml}
+                            </div>
+                            
+                            <div class="gift-right-zone">
+                                <div class="gift-price-zone">
+                                    <div class="price-row-taxed">原含稅價: ￥${item.originalEval.toLocaleString()} (約 $${twdTaxed.toLocaleString()})</div>
+                                    ${item.isTaxFreeComputed ? `<div class="price-row-free">免稅實付: ￥${item.jpyPrice.toLocaleString()} (約 $${twdFree.toLocaleString()})</div>` : `<div class="price-row-free" style="color:#666; font-weight:normal;">無退稅實付相同</div>`}
+                                </div>
+                                <div class="action-btns">
+                                    <button class="btn-icon" onclick="startEdit(${item.id}); event.stopPropagation();" title="編輯">✏️</button>
+                                    <button class="btn-icon delete" onclick="deleteGift(${item.id}); event.stopPropagation();" title="刪除">❌</button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="flex items-center space-x-1 opacity-80 group-hover:opacity-100">
-                            <button onclick="editExpense('${item.id}')" class="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100" title="編輯">
-                                <i class="fa-solid fa-pen text-xs"></i>
-                            </button>
-                            <button onclick="deleteExpense('${item.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50" title="刪除">
-                                <i class="fa-solid fa-trash text-xs"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>`;
-            }).join('');
-        }
-
-        function renderSouvenirsTab() {
-            const container = document.getElementById('souvenirsGroupedContainer');
-            const summaryBadges = document.getElementById('souvenirSummaryBadges');
-
-            // Group by recipient
-            const grouped = {};
-            souvenirsWishlist.forEach(item => {
-                const rec = item.recipient.trim() || '未指定對象';
-                if (!grouped[rec]) grouped[rec] = [];
-                grouped[rec].push(item);
+                    `;
+                }
             });
 
-            // Summary Badges calculation
-            const totalTasks = souvenirsWishlist.length;
-            const completedTasks = souvenirsWishlist.filter(s => s.isPurchased).length;
-            const uniqueRecipients = Object.keys(grouped).length;
+            const safeItemsJson = JSON.stringify(groupedData[person]).replace(/'/g, "\\'");
             
-            // Total spent on souvenirs
-            const souvenirSpent = expensesData
-                .filter(e => e.category === 'gift')
-                .reduce((sum, e) => sum + e.amountJPY, 0);
+            const isCollapsed = collapsedState[person];
+            const bodyClass = isCollapsed ? 'person-gifts-body collapsed' : 'person-gifts-body';
+            const arrowChar = isCollapsed ? '▶' : '▼';
 
-            summaryBadges.innerHTML = `
-                <div class="bg-white/90 p-2 rounded-xl text-center shadow-xs border border-rose-100">
-                    <span class="text-[10px] text-slate-500 font-medium block">受贈對象數</span>
-                    <span class="text-sm font-bold text-rose-700">${uniqueRecipients} 位</span>
-                </div>
-                <div class="bg-white/90 p-2 rounded-xl text-center shadow-xs border border-rose-100">
-                    <span class="text-[10px] text-slate-500 font-medium block">採買進度</span>
-                    <span class="text-sm font-bold text-emerald-600">${completedTasks} / ${totalTasks} 件</span>
-                </div>
-                <div class="bg-white/90 p-2 rounded-xl text-center shadow-xs border border-rose-100">
-                    <span class="text-[10px] text-slate-500 font-medium block">伴手禮實際總支出</span>
-                    <span class="text-sm font-bold text-slate-800 font-mono">¥${souvenirSpent.toLocaleString()}</span>
-                </div>
-                <div class="bg-white/90 p-2 rounded-xl text-center shadow-xs border border-rose-100">
-                    <span class="text-[10px] text-slate-500 font-medium block">折合台幣約</span>
-                    <span class="text-sm font-bold text-amber-700 font-mono">NT$ ${(souvenirSpent * exchangeRate).toFixed(0)}</span>
-                </div>
-            `;
-
-            if (Object.keys(grouped).length === 0) {
-                container.innerHTML = `
-                    <div class="py-12 text-center bg-white rounded-2xl border border-slate-200">
-                        <div class="text-3xl mb-2">🎁</div>
-                        <p class="text-xs text-slate-500">尚無伴手禮清單，點選上方「新增受贈對象」開始規劃吧！</p>
-                    </div>`;
-                return;
-            }
-
-            container.innerHTML = Object.entries(grouped).map(([recipient, items]) => {
-                const boughtCount = items.filter(i => i.isPurchased).length;
-                const isAllDone = boughtCount === items.length;
-
-                return `
-                <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
-                    <div class="bg-slate-50/90 px-4 py-3 border-b border-slate-200/80 flex items-center justify-between">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-7 h-7 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center text-xs font-bold">
-                                <i class="fa-solid fa-user"></i>
-                            </span>
-                            <h3 class="font-bold text-sm text-slate-900">${escapeHtml(recipient)}</h3>
-                            <span class="text-xs text-slate-400 font-medium">(${items.length} 樣物品)</span>
+            htmlContent += `
+                <div class="person-summary">
+                    <div class="person-header" onclick="togglePersonGifts('${person}')">
+                        <div class="person-name-box">
+                            <span class="person-toggle-arrow" id="personArrow-${person}">${arrowChar}</span>
+                            <span class="person-name">👤 ${person}</span>
+                            <button class="btn-copy" onclick='copyToClipboard("${person}", ${safeItemsJson}); event.stopPropagation();'>📋 複製 LINE 明細</button>
                         </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full ${isAllDone ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
-                                ${isAllDone ? '✓ 全數買齊' : `待採買 ${items.length - boughtCount} 件`}
-                            </span>
+                        <div class="person-total-box">
+                            <div class="person-total-taxed">含稅原小計: ￥${personTaxedJpy.toLocaleString()} / $${personTaxedTwd.toLocaleString()} TWD</div>
+                            <div class="person-total-free">免稅實小計: ￥${personFreeJpy.toLocaleString()} / $${personFreeTwd.toLocaleString()} TWD</div>
                         </div>
                     </div>
-
-                    <div class="divide-y divide-slate-100">
-                        ${items.map(item => `
-                            <div class="p-3 sm:px-4 flex items-center justify-between hover:bg-slate-50/50 transition">
-                                <div class="flex items-center space-x-3 flex-1 min-w-0 pr-3">
-                                    <button onclick="toggleSouvenirBought('${item.id}')" 
-                                        class="w-5 h-5 rounded-md border ${item.isPurchased ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-300 hover:border-slate-400'} flex items-center justify-center transition shrink-0">
-                                        ${item.isPurchased ? '<i class="fa-solid fa-check text-[10px]"></i>' : ''}
-                                    </button>
-                                    <div class="min-w-0">
-                                        <div class="flex items-center space-x-2">
-                                            <span class="text-xs font-bold ${item.isPurchased ? 'line-through text-slate-400' : 'text-slate-800'} truncate">
-                                                ${escapeHtml(item.item)}
-                                            </span>
-                                            ${item.store ? `<span class="text-[10px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded"><i class="fa-solid fa-store mr-1 text-[9px]"></i>${escapeHtml(item.store)}</span>` : ''}
-                                        </div>
-                                        <div class="text-[11px] text-slate-500 mt-0.5 font-mono">
-                                            預算: ¥${(item.budgetJPY || 0).toLocaleString()} (約 NT$ ${Math.round((item.budgetJPY || 0) * exchangeRate)})
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="flex items-center space-x-2 shrink-0">
-                                    ${!item.isPurchased ? `
-                                        <button onclick="quickLogSouvenirExpense('${item.id}')" 
-                                            class="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-semibold rounded-lg border border-rose-200 transition"
-                                            title="已買到，立即轉為實際支出記帳">
-                                            記一筆
-                                        </button>
-                                    ` : `
-                                        <span class="text-xs text-emerald-600 font-bold"><i class="fa-solid fa-circle-check mr-1"></i>已購入</span>
-                                    `}
-                                    <button onclick="deleteSouvenir('${item.id}')" class="p-1 text-slate-300 hover:text-rose-500 text-xs" title="刪除此項目">
-                                        <i class="fa-solid fa-trash-can"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        `).join('')}
+                    <div class="${bodyClass}" id="personBody-${person}">
+                        ${itemsHtml}
                     </div>
-                </div>`;
-            }).join('');
-        }
-
-        function renderFoodTab() {
-            const container = document.getElementById('foodDayList');
-            const foodExpenses = expensesData.filter(e => e.category === 'food');
-            
-            const totalFoodJPY = foodExpenses.reduce((sum, e) => sum + e.amountJPY, 0);
-            document.getElementById('foodTotalAmount').textContent = `¥${totalFoodJPY.toLocaleString()}`;
-
-            // Group by date
-            const groupedByDate = {};
-            foodExpenses.forEach(exp => {
-                if (!groupedByDate[exp.date]) groupedByDate[exp.date] = [];
-                groupedByDate[exp.date].push(exp);
-            });
-
-            const sortedDates = Object.keys(groupedByDate).sort((a, b) => new Date(b) - new Date(a));
-
-            if (sortedDates.length === 0) {
-                container.innerHTML = `
-                    <div class="py-12 text-center bg-white rounded-2xl border border-slate-200">
-                        <div class="text-3xl mb-2">🍜</div>
-                        <p class="text-xs text-slate-500">尚無美食餐飲紀錄。在右下角點擊「+」新增拉麵、壽司或超商消夜吧！</p>
-                    </div>`;
-                return;
-            }
-
-            container.innerHTML = sortedDates.map(dateStr => {
-                const items = groupedByDate[dateStr];
-                const dayTotal = items.reduce((sum, i) => sum + i.amountJPY, 0);
-                const dayTWD = Math.round(dayTotal * exchangeRate);
-
-                return `
-                <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
-                    <div class="bg-amber-50/70 px-4 py-2.5 border-b border-amber-200/50 flex items-center justify-between">
-                        <div class="flex items-center space-x-2">
-                            <i class="fa-solid fa-calendar-day text-amber-600 text-xs"></i>
-                            <span class="text-xs font-bold text-amber-950">${dateStr} 飲食總覽</span>
-                        </div>
-                        <div class="text-xs font-mono font-bold text-amber-900">
-                            當日合計: ¥${dayTotal.toLocaleString()} <span class="text-[11px] text-amber-700/80">(約 NT$ ${dayTWD})</span>
-                        </div>
-                    </div>
-
-                    <div class="divide-y divide-slate-100 p-2">
-                        ${items.map(item => `
-                            <div class="py-2.5 px-3 flex items-center justify-between hover:bg-slate-50/60 rounded-xl transition">
-                                <div class="flex items-center space-x-2.5 min-w-0">
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200/80">
-                                        ${item.mealPeriod || '餐飲'}
-                                    </span>
-                                    <div class="min-w-0">
-                                        <div class="text-xs font-bold text-slate-800 truncate">${escapeHtml(item.title)}</div>
-                                        ${item.note ? `<div class="text-[11px] text-slate-400 truncate">${escapeHtml(item.note)}</div>` : ''}
-                                    </div>
-                                </div>
-                                <div class="text-right shrink-0">
-                                    <div class="text-xs font-bold font-mono text-slate-900">¥${item.amountJPY.toLocaleString()}</div>
-                                    <div class="text-[10px] text-slate-400">${escapeHtml(item.paymentMethod.split(' ')[0])}</div>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>`;
-            }).join('');
-        }
-
-        function renderStatsTab() {
-            const totalJPY = expensesData.reduce((acc, curr) => acc + curr.amountJPY, 0);
-            const totalTWD = Math.round(totalJPY * exchangeRate);
-            const taxFreeTotal = expensesData
-                .filter(e => e.isTaxFree)
-                .reduce((acc, curr) => acc + curr.amountJPY, 0);
-
-            document.getElementById('statGrandTotalJPY').textContent = `¥${totalJPY.toLocaleString()}`;
-            document.getElementById('statGrandTotalTWD').textContent = totalTWD.toLocaleString();
-            document.getElementById('statTaxFreeTotal').textContent = `¥${taxFreeTotal.toLocaleString()}`;
-
-            // Top Payment method calculation
-            const methodCounts = {};
-            expensesData.forEach(e => {
-                const method = e.paymentMethod || '其他';
-                methodCounts[method] = (methodCounts[method] || 0) + e.amountJPY;
-            });
-
-            let topMethod = '無';
-            let maxMethodSpend = 0;
-            for (const [m, amt] of Object.entries(methodCounts)) {
-                if (amt > maxMethodSpend) {
-                    maxMethodSpend = amt;
-                    topMethod = m;
-                }
-            }
-            document.getElementById('statTopPaymentMethod').textContent = topMethod;
-        }
-
-        function initOrUpdateCharts() {
-            // Category breakdown
-            const catMap = {};
-            Object.keys(CATEGORIES).forEach(k => catMap[k] = 0);
-            expensesData.forEach(e => {
-                const c = e.category || 'other';
-                catMap[c] = (catMap[c] || 0) + e.amountJPY;
-            });
-
-            const catLabels = Object.keys(catMap).map(k => `${CATEGORIES[k].emoji} ${CATEGORIES[k].name}`);
-            const catValues = Object.values(catMap);
-            const catColors = ['#f59e0b', '#f43f5e', '#0284c7', '#6366f1', '#a855f7', '#10b981', '#64748b', '#94a3b8'];
-
-            const ctxCategory = document.getElementById('categoryChart').getContext('2d');
-            if (categoryChartInstance) categoryChartInstance.destroy();
-
-            categoryChartInstance = new Chart(ctxCategory, {
-                type: 'doughnut',
-                data: {
-                    labels: catLabels,
-                    datasets: [{
-                        data: catValues,
-                        backgroundColor: catColors,
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const val = context.parsed;
-                                    const twd = Math.round(val * exchangeRate);
-                                    return ` ¥${val.toLocaleString()} (約 NT$ ${twd.toLocaleString()})`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Payment Methods breakdown
-            const payMap = {};
-            expensesData.forEach(e => {
-                const method = e.paymentMethod || '其他';
-                payMap[method] = (payMap[method] || 0) + e.amountJPY;
-            });
-
-            const payLabels = Object.keys(payMap);
-            const payValues = Object.values(payMap);
-            const payColors = ['#10b981', '#38bdf8', '#f43f5e', '#8b5cf6', '#f59e0b'];
-
-            const ctxPayment = document.getElementById('paymentChart').getContext('2d');
-            if (paymentChartInstance) paymentChartInstance.destroy();
-
-            paymentChartInstance = new Chart(ctxPayment, {
-                type: 'bar',
-                data: {
-                    labels: payLabels.map(l => l.split(' ')[0]),
-                    datasets: [{
-                        label: '花費金額 (¥)',
-                        data: payValues,
-                        backgroundColor: payColors,
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: true, ticks: { font: { size: 10 } } },
-                        x: { ticks: { font: { size: 10 } } }
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: (context) => `¥${context.parsed.y.toLocaleString()} JPY`
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        function runTaxCalculation() {
-            const rawAmount = parseFloat(document.getElementById('calcInputAmount').value) || 0;
-            const calcType = document.getElementById('calcType').value;
-            const rate = parseFloat(document.getElementById('calcRateInput').value) || exchangeRate;
-
-            let noTaxAmount = 0;
-            let withTaxAmount = 0;
-
-            if (calcType === 'withTax10') {
-                withTaxAmount = rawAmount;
-                noTaxAmount = Math.round(rawAmount / 1.10);
-            } else if (calcType === 'withTax8') {
-                withTaxAmount = rawAmount;
-                noTaxAmount = Math.round(rawAmount / 1.08);
-            } else {
-                noTaxAmount = rawAmount;
-                withTaxAmount = Math.round(rawAmount * 1.10);
-            }
-
-            const taxDifference = withTaxAmount - noTaxAmount;
-            const isQualifiedTaxFree = noTaxAmount >= 5000;
-            const twdNoTax = Math.round(noTaxAmount * rate);
-            const twdWithTax = Math.round(withTaxAmount * rate);
-
-            const resultContainer = document.getElementById('taxCalcResult');
-            resultContainer.innerHTML = `
-                <div class="p-2">
-                    <span class="text-[10px] font-semibold text-slate-400 block">未稅本體價 (稅拔)</span>
-                    <span class="text-base font-extrabold text-slate-800 font-mono">¥${noTaxAmount.toLocaleString()}</span>
-                    <span class="text-[10px] text-slate-500 block">NT$ ${twdNoTax.toLocaleString()}</span>
-                </div>
-                <div class="p-2">
-                    <span class="text-[10px] font-semibold text-slate-400 block">含稅總計 (10%)</span>
-                    <span class="text-base font-extrabold text-slate-800 font-mono">¥${withTaxAmount.toLocaleString()}</span>
-                    <span class="text-[10px] text-slate-500 block">NT$ ${twdWithTax.toLocaleString()}</span>
-                </div>
-                <div class="p-2">
-                    <span class="text-[10px] font-semibold text-slate-400 block">退稅省下的稅金</span>
-                    <span class="text-base font-extrabold text-rose-600 font-mono">¥${taxDifference.toLocaleString()}</span>
-                    <span class="text-[10px] text-rose-500 block">省下約 NT$ ${Math.round(taxDifference * rate)}</span>
-                </div>
-                <div class="p-2">
-                    <span class="text-[10px] font-semibold text-slate-400 block">5,000円免稅門檻</span>
-                    <span class="text-xs font-bold px-2 py-1 rounded-full inline-block mt-1 ${isQualifiedTaxFree ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-700'}">
-                        ${isQualifiedTaxFree ? '✓ 符合免稅資格' : `還差 ¥${(5000 - noTaxAmount).toLocaleString()}`}
-                    </span>
                 </div>
             `;
         }
 
-        function openAddExpenseModal() {
-            document.getElementById('modalExpenseTitle').textContent = '記下一筆日本花費';
-            document.getElementById('editExpenseId').value = '';
-            document.getElementById('expenseForm').reset();
+        container.innerHTML = htmlContent;
 
-            // Default category food
-            document.querySelector('input[name="modalCategory"][value="food"]').checked = true;
-            toggleCategoryFields('food');
+        document.getElementById('grandTotalTaxedJpy').innerText = `￥${grandTaxedJpy.toLocaleString()}`;
+        document.getElementById('grandTotalTaxedTwd').innerText = `$${grandTaxedTwd.toLocaleString()}`;
+        document.getElementById('grandTotalFreeJpy').innerText = `￥${grandFreeJpy.toLocaleString()}`;
+        document.getElementById('grandTotalFreeTwd').innerText = `$${grandFreeTwd.toLocaleString()}`;
+        document.getElementById('grandBuyTwd').innerText = `$${grandBuyTwd.toLocaleString()}`;
+        document.getElementById('grandGiftTwd').innerText = `$${grandGiftTwd.toLocaleString()}`;
+        document.getElementById('grandCardTwd').innerText = `$${grandCardTwd.toLocaleString()}`;
+        document.getElementById('grandCashTwd').innerText = `$${grandCashTwd.toLocaleString()}`;
+        
+        document.getElementById('grandTotalSavedJpy').innerText = `￥${grandSavedTaxJpy.toLocaleString()}`;
+        document.getElementById('grandTotalSavedTwd').innerText = `$${grandSavedTaxTwd.toLocaleString()}`;
+    }
+</script>
 
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('expenseDateInput').value = today;
-            document.getElementById('modalTWDPreview').textContent = '0';
-
-            document.getElementById('expenseModal').classList.remove('hidden');
-        }
-
-        function closeExpenseModal() {
-            document.getElementById('expenseModal').classList.add('hidden');
-        }
-
-        function toggleCategoryFields(cat) {
-            const foodSection = document.getElementById('foodSpecificSection');
-            const giftSection = document.getElementById('giftSpecificSection');
-
-            if (cat === 'food') {
-                foodSection.classList.remove('hidden');
-            } else {
-                foodSection.classList.add('hidden');
-            }
-
-            if (cat === 'gift') {
-                giftSection.classList.remove('hidden');
-            } else {
-                giftSection.classList.add('hidden');
-            }
-        }
-
-        function calculateModalTWD() {
-            const jpy = parseFloat(document.getElementById('expenseItemJPY').value) || 0;
-            const twd = Math.round(jpy * exchangeRate);
-            document.getElementById('modalTWDPreview').textContent = twd.toLocaleString();
-        }
-
-        function setRecipientFast(name) {
-            document.getElementById('giftRecipientInput').value = name;
-        }
-
-        function handleExpenseSubmit(event) {
-            event.preventDefault();
-            const editId = document.getElementById('editExpenseId').value;
-            const category = document.querySelector('input[name="modalCategory"]:checked').value;
-            const title = document.getElementById('expenseItemTitle').value.trim();
-            const amountJPY = parseInt(document.getElementById('expenseItemJPY').value, 10);
-            const paymentMethod = document.getElementById('expensePaymentMethod').value;
-            const date = document.getElementById('expenseDateInput').value;
-            const isTaxFree = document.getElementById('expenseIsTaxFree').checked;
-            const note = document.getElementById('expenseNoteInput').value.trim();
-
-            let mealPeriod = '';
-            if (category === 'food') {
-                mealPeriod = document.querySelector('input[name="mealPeriod"]:checked')?.value || '午餐';
-            }
-
-            let recipient = '';
-            if (category === 'gift') {
-                recipient = document.getElementById('giftRecipientInput').value.trim() || '未指定對象';
-            }
-
-            if (editId) {
-                // Update
-                const index = expensesData.findIndex(e => e.id === editId);
-                if (index !== -1) {
-                    expensesData[index] = {
-                        ...expensesData[index],
-                        category, title, amountJPY, paymentMethod, date, isTaxFree, note, mealPeriod, recipient
-                    };
-                    showToast('已成功更新明細！');
-                }
-            } else {
-                // Create
-                const newExp = {
-                    id: 'exp-' + Date.now(),
-                    category,
-                    title,
-                    amountJPY,
-                    paymentMethod,
-                    date,
-                    isTaxFree,
-                    note,
-                    mealPeriod,
-                    recipient
-                };
-                expensesData.unshift(newExp);
-                showToast(`已記帳：¥${amountJPY.toLocaleString()} (${title})`);
-            }
-
-            closeExpenseModal();
-            refreshAllViews();
-        }
-
-        function editExpense(id) {
-            const exp = expensesData.find(e => e.id === id);
-            if (!exp) return;
-
-            document.getElementById('modalExpenseTitle').textContent = '編輯消費明細';
-            document.getElementById('editExpenseId').value = exp.id;
-            
-            // Radio category
-            const radio = document.querySelector(`input[name="modalCategory"][value="${exp.category}"]`);
-            if (radio) radio.checked = true;
-            toggleCategoryFields(exp.category);
-
-            document.getElementById('expenseItemTitle').value = exp.title;
-            document.getElementById('expenseItemJPY').value = exp.amountJPY;
-            document.getElementById('expensePaymentMethod').value = exp.paymentMethod;
-            document.getElementById('expenseDateInput').value = exp.date;
-            document.getElementById('expenseIsTaxFree').checked = exp.isTaxFree;
-            document.getElementById('expenseNoteInput').value = exp.note || '';
-
-            if (exp.category === 'food' && exp.mealPeriod) {
-                const mealRadio = document.querySelector(`input[name="mealPeriod"][value="${exp.mealPeriod}"]`);
-                if (mealRadio) mealRadio.checked = true;
-            }
-
-            if (exp.category === 'gift') {
-                document.getElementById('giftRecipientInput').value = exp.recipient || '';
-            }
-
-            calculateModalTWD();
-            document.getElementById('expenseModal').classList.remove('hidden');
-        }
-
-        function deleteExpense(id) {
-            const exp = expensesData.find(e => e.id === id);
-            if (!exp) return;
-            
-            // Delete confirmation through soft removal or direct
-            expensesData = expensesData.filter(e => e.id !== id);
-            showToast(`已刪除「${exp.title}」`, 'fa-circle-xmark text-rose-400');
-            refreshAllViews();
-        }
-
-        function openSouvenirModal() {
-            document.getElementById('souvenirForm').reset();
-            document.getElementById('souvenirModal').classList.remove('hidden');
-        }
-
-        function closeSouvenirModal() {
-            document.getElementById('souvenirModal').classList.add('hidden');
-        }
-
-        function handleSouvenirSubmit(event) {
-            event.preventDefault();
-            const recipient = document.getElementById('planRecipient').value.trim();
-            const item = document.getElementById('planItem').value.trim();
-            const budgetJPY = parseInt(document.getElementById('planBudgetJPY').value, 10) || 0;
-            const store = document.getElementById('planStore').value.trim();
-
-            const newSouvenir = {
-                id: 'souv-' + Date.now(),
-                recipient,
-                item,
-                budgetJPY,
-                store,
-                isPurchased: false,
-                actualExpenseId: null
-            };
-
-            souvenirsWishlist.push(newSouvenir);
-            closeSouvenirModal();
-            renderSouvenirsTab();
-            renderHeaderStrip();
-            showToast(`已新增要送給「${recipient}」的清單！`);
-        }
-
-        function toggleSouvenirBought(id) {
-            const item = souvenirsWishlist.find(s => s.id === id);
-            if (!item) return;
-            item.isPurchased = !item.isPurchased;
-            renderSouvenirsTab();
-            renderHeaderStrip();
-        }
-
-        function quickLogSouvenirExpense(souvenirId) {
-            const item = souvenirsWishlist.find(s => s.id === souvenirId);
-            if (!item) return;
-
-            openAddExpenseModal();
-            // Preset values
-            document.querySelector('input[name="modalCategory"][value="gift"]').checked = true;
-            toggleCategoryFields('gift');
-            document.getElementById('expenseItemTitle').value = item.item;
-            document.getElementById('giftRecipientInput').value = item.recipient;
-            if (item.budgetJPY) {
-                document.getElementById('expenseItemJPY').value = item.budgetJPY;
-                calculateModalTWD();
-            }
-            if (item.store) {
-                document.getElementById('expenseNoteInput').value = item.store;
-            }
-            // Mark souvenir bought upon save automatically or allow user to edit
-            item.isPurchased = true;
-        }
-
-        function deleteSouvenir(id) {
-            souvenirsWishlist = souvenirsWishlist.filter(s => s.id !== id);
-            renderSouvenirsTab();
-            renderHeaderStrip();
-            showToast('已移除伴手禮清單項目');
-        }
-
-        function exportDataModal() {
-            let totalJPY = 0;
-            expensesData.forEach(e => totalJPY += e.amountJPY);
-            const totalTWD = Math.round(totalJPY * exchangeRate);
-
-            let txt = `【日旅達人手帳 - 日本花費總清單】\n`;
-            txt += `匯率基準: 1 JPY = ${exchangeRate} TWD\n`;
-            txt += `總支出合計: ¥${totalJPY.toLocaleString()} (約 NT$ ${totalTWD.toLocaleString()})\n\n`;
-
-            txt += `--- 🎁 伴手禮依對象花費明細 ---\n`;
-            const gifts = expensesData.filter(e => e.category === 'gift');
-            if (gifts.length === 0) {
-                txt += `尚未記錄伴手禮支出\n`;
-            } else {
-                gifts.forEach(g => {
-                    txt += `• [${g.recipient || '未指定'}] ${g.title}: ¥${g.amountJPY.toLocaleString()} (${g.paymentMethod})\n`;
-                });
-            }
-
-            txt += `\n--- 🍜 各日美食餐飲精選 ---\n`;
-            const foods = expensesData.filter(e => e.category === 'food');
-            foods.forEach(f => {
-                txt += `• ${f.date} | ${f.mealPeriod || '餐點'} | ${f.title}: ¥${f.amountJPY.toLocaleString()}\n`;
-            });
-
-            txt += `\n--- 🚇 交通、門票與玩樂 ---\n`;
-            const others = expensesData.filter(e => ['transit', 'ticket', 'fun'].includes(e.category));
-            others.forEach(o => {
-                const catName = CATEGORIES[o.category]?.name || '其他';
-                txt += `• [${catName}] ${o.title}: ¥${o.amountJPY.toLocaleString()} (${o.date})\n`;
-            });
-
-            txt += `\n（由「日旅達人手帳」快速匯出）`;
-
-            document.getElementById('exportTextArea').value = txt;
-            document.getElementById('exportModal').classList.remove('hidden');
-        }
-
-        function closeExportModal() {
-            document.getElementById('exportModal').classList.add('hidden');
-        }
-
-        function copyExportText() {
-            const textarea = document.getElementById('exportTextArea');
-            textarea.select();
-            try {
-                document.execCommand('copy');
-                showToast('已複製到剪貼簿！可貼至 LINE 群組', 'fa-copy text-matcha-400');
-            } catch (err) {
-                showToast('複製失敗，請手動全選複製', 'fa-triangle-exclamation text-amber-400');
-            }
-        }
-
-        function escapeHtml(string) {
-            if (!string) return '';
-            return String(string)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
-        }
-    </script>
 </body>
 </html>
